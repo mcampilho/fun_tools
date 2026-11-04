@@ -1,7 +1,7 @@
 //! Pixel art for the full-screen tools' Unicode look: a buffer of square pixels,
 //! shown two per terminal cell with half blocks (`▀ ▄`) and coloured backgrounds.
 
-use crate::term::Rgb;
+use crate::term::{self, Depth, Rgb};
 use crate::tui::{Canvas, Cell};
 
 pub struct Pixels {
@@ -101,6 +101,36 @@ impl Pixels {
                 c.put(x as i64, row as i64, cell);
             }
         }
+    }
+
+    /// The pixels as lines of text with colour codes, for printing (not full
+    /// screen); without colours, the shapes are kept with block characters.
+    /// Empty space at the line ends is left out.
+    pub fn to_lines(&self, depth: Depth) -> Vec<String> {
+        let mut lines = Vec::new();
+        for row in 0..self.h.div_ceil(2) as i64 {
+            let px = |x: i64| (self.get(x, 2 * row), self.get(x, 2 * row + 1));
+            let end = (0..self.w as i64).rev().find(|&x| px(x) != (None, None)).map_or(0, |x| x + 1);
+            let mut s = String::new();
+            for x in 0..end {
+                let cell = match px(x) {
+                    (None, None) => " ".to_string(),
+                    _ if depth == Depth::None => match px(x) {
+                        (Some(_), None) => "▀",
+                        (None, Some(_)) => "▄",
+                        _ => "█",
+                    }
+                    .to_string(),
+                    (Some(t), None) => format!("{}▀{}", term::fg(depth, t), term::RESET),
+                    (None, Some(b)) => format!("{}▄{}", term::fg(depth, b), term::RESET),
+                    (Some(t), Some(b)) if t == b => format!("{} {}", term::color(depth, t, true), term::RESET),
+                    (Some(t), Some(b)) => format!("{}{}▀{}", term::fg(depth, t), term::color(depth, b, true), term::RESET),
+                };
+                s.push_str(&cell);
+            }
+            lines.push(s);
+        }
+        lines
     }
 
     /// A character on top of the pixels of cell (`x`, `row`), on their colour.

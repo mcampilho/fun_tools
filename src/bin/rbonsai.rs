@@ -669,6 +669,8 @@ fn main() {
     if unicode {
         let tree = grow_px(w, h, seed, life, mult, base, foliage);
         if live_mode && tty {
+            // Moving the cursor needs escape codes even without colours (NO_COLOR).
+            term::enable_ansi();
             tree.live(depth, Duration::from_secs_f64(step / 4.0));
         } else {
             let _ = std::io::stdout().write_all(tree.render(depth).as_bytes());
@@ -680,6 +682,8 @@ fn main() {
     }
     let tree = grow(w, h, seed, life, mult, base);
     if live_mode && tty {
+            // Moving the cursor needs escape codes even without colours (NO_COLOR).
+            term::enable_ansi();
         live(&tree, depth, Duration::from_secs_f64(step));
     } else {
         let _ = std::io::stdout().write_all(render(&tree, depth).as_bytes());

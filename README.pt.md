@@ -22,6 +22,10 @@ Todas as tools começam por **r** (de Rust).
 | `rtty-clock` | tty-clock | Um relógio digital grande |
 | `rasciiquarium` | asciiquarium | Um aquário: peixes, tubarões, uma baleia, um barco... |
 | `rnyancat` | nyancat | Um gato com corpo de bolo voa pelo espaço num arco-íris |
+| `rpipes` | pipes.sh | Canos crescem pelo terminal e viram ao acaso |
+| `rnms` | no-more-secrets | Texto baralhado que se desencripta, como nos filmes |
+| `rponysay` | ponysay | Um pónei em pixel art diz ou pensa uma mensagem |
+| `rgenact` | genact | Atividade a fingir: compilações, arranques, descargas, instalações |
 | `rhollywood` | hollywood | Painéis com atividade de "hacker" muito ocupada, como nos filmes |
 | `rrig` | rig | Identidades fictícias ao acaso para dados de teste |
 
@@ -43,7 +47,7 @@ cargo install --path .
 - **Windows:** precisa das ferramentas de compilação MSVC (`link.exe`, `cl.exe`) no ambiente.
 - **Linux:** precisa de um compilador de C (`gcc` ou `clang`), usado pela biblioteca de TLS do rfetch.
 
-As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rhollywood) precisam de um terminal.
+As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rhollywood) precisam de um terminal.
 
 `test.bat` (Windows) e `test.sh` (Linux) compilam tudo e mostram uma pequena demonstração de cada tool.
 
@@ -214,6 +218,61 @@ mexe as patas e a cauda, e as estrelas cintilam ao passar. O contador em baixo d
 quanto tempo está a voar (`-n` esconde-o). O desenho é original e é sempre feito no
 aspeto Unicode, ampliado para caber no terminal (ou `-s`). `-d` dá o tempo de cada
 imagem. q, Esc ou Ctrl+C para sair.
+
+### rpipes
+
+```bash
+rpipes
+rpipes -p 5 -t 1 -t 2 -R           # cinco canos, finos e redondos, em sítios ao acaso
+rpipes -t c"|-++++" -s 5           # peças à escolha, mais às voltas
+rpipes -l                          # os estilos
+```
+
+Estilos: heavy, light, rounded, double, dashed, mixed, blocks, dots, ascii (`-t 0` a `-t 8`).
+Opções: `-p` canos, `-f` passos por segundo, `-s` quão direitos, `-r` limpar ao fim de tantas
+peças, `-R` começar ao acaso, `-K` manter a cor e o estilo ao passar a borda, `-B` sem negrito,
+`-C` sem cores. Teclas: q sair, espaço limpar, 1 a 9 velocidade.
+
+### rnms
+
+```bash
+echo "O segredo é 42" | rnms       # baralhado, uma tecla e depois desencriptado
+ls -l | rnms -a -f green           # desencriptar logo, a verde
+rnms -u "Muito secreto"            # baralhar também com símbolos de blocos e geométricos
+```
+
+O texto fica no ecrã no fim. Opções: `-a` sem tecla, `-s` baralhar também os espaços,
+`-f` cor, `-c` limpar o ecrã primeiro, `-t` segundos a baralhar. Sem texto, mostra uma pequena
+demonstração.
+
+### rponysay
+
+```bash
+rponysay "Olá!"
+rfortune | rponysay -k unicorn -f lilac
+rponysay -t -k pegasus "Hmm..."    # pensar
+rponysay -l                        # pelagens e tipos
+```
+
+![Póneis e canos](docs/ponies-pipes.png)
+
+Os póneis são pixel art original desenhada pelo programa (não são as personagens do ponysay
+original): três tipos (pony, unicorn, pegasus) e oito pelagens (coral, lilac, azure, lemon,
+jade, plum, snow, cocoa), escolhidos ao acaso se não forem indicados. `-W` largura, `-n` sem
+quebra de linhas, `-s` semente.
+
+### rgenact
+
+```bash
+rgenact                            # um módulo atrás do outro, sem parar
+rgenact -m cargo -m docker -s 2    # só estes, duas vezes mais depressa
+rgenact --exit-after-time 60
+rgenact -l
+```
+
+Módulos: cargo, bootlog, kernel, docker, download, memdump, packages, terraform, ansible,
+weblog, hashcrack, loading. É tudo inventado: nomes, hashes e endereços (só das gamas
+reservadas para documentação). Ctrl+C para parar.
 
 ### rhollywood
 

@@ -8,6 +8,7 @@ set "PATH=%~dp0target\release;%PATH%"
 rfetch -o
 rcowsay "Rust is fantastic!"
 rcowsay -f crab -W 30 "Tools that run on Windows and Linux, written in Rust" | rlolcat -f
+rponysay -k unicorn "Rust in pixels!"
 rcowthink -f owl "Hmm..."
 
 rfortune
@@ -32,10 +33,13 @@ rtoilet --gay Rust
 rtoilet -f tiny -F border:metal "Windows + Linux"
 rrig -c 2 -e
 rrig -C pt -o csv -c 3
+rrig -c 3 | rnms -a
 
 rtty-clock -s -x
 rasciiquarium
 rasciiquarium -u
 rnyancat
+rpipes -p 4 -R
 rhollywood
+rgenact --exit-after-time 20
 endlocal
