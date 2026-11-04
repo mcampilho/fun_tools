@@ -21,6 +21,7 @@ Todas as tools começam por **r** (de Rust).
 | `rtoilet` | toilet | Letras grandes e coloridas, com filtros |
 | `rtty-clock` | tty-clock | Um relógio digital grande |
 | `rasciiquarium` | asciiquarium | Um aquário: peixes, tubarões, uma baleia, um barco... |
+| `rnyancat` | nyancat | Um gato com corpo de bolo voa pelo espaço num arco-íris |
 | `rhollywood` | hollywood | Painéis com atividade de "hacker" muito ocupada, como nos filmes |
 | `rrig` | rig | Identidades fictícias ao acaso para dados de teste |
 
@@ -42,7 +43,7 @@ cargo install --path .
 - **Windows:** precisa das ferramentas de compilação MSVC (`link.exe`, `cl.exe`) no ambiente.
 - **Linux:** precisa de um compilador de C (`gcc` ou `clang`), usado pela biblioteca de TLS do rfetch.
 
-As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rhollywood) precisam de um terminal.
+As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rhollywood) precisam de um terminal.
 
 `test.bat` (Windows) e `test.sh` (Linux) compilam tudo e mostram uma pequena demonstração de cada tool.
 
@@ -115,9 +116,11 @@ rfortune --system                  # Linux: também /usr/share/games/fortunes
 rbonsai                            # mostrar uma árvore
 rbonsai -l                         # vê-la crescer
 rbonsai -s 42 -M 8 -b 2            # semente, mais ramos, vaso pequeno
+rbonsai -u -f blossom -l           # aspeto Unicode, em flor (ver abaixo)
 ```
 
 A mesma semente dá a mesma árvore (`-v` mostra-a). `-L` comprimento do tronco, `-W`/`-H` tamanho.
+Com `-u`, `-f` escolhe as folhas: green (verde), autumn (outono), blossom (em flor) ou random.
 
 ### rmatrix
 
@@ -183,7 +186,7 @@ Peixes de vários tipos nadam para os dois lados e deitam bolhas, as algas ondul
 vez em quando, passa um tubarão (come os peixes pequenos), uma baleia com o seu repuxo, um
 barco ou uma medusa. Teclas: q sair, p pausa, r recomeçar.
 
-### O aspeto Unicode (`-u`) do rasciiquarium e do rsl
+### O aspeto Unicode (`-u`) do rasciiquarium, do rsl e do rbonsai
 
 ![Aspeto Unicode](docs/unicode.png)
 
@@ -192,9 +195,25 @@ pixels quadrados com os meios blocos `▀ ▄`, e alguns símbolos ficam por cim
 estrelas `✦ · ∙`). O aquário ganha um céu noturno com quarto crescente, ondas, raios de luz,
 um fundo de areia e criaturas em pixels. O comboio ganha um tender, carruagens com
 passageiros, rodas que giram com bielas, fumo a subir e uma paisagem com nuvens, colinas e a
-via. É uma opção porque precisa de uma fonte com estes caracteres (Cascadia, Consolas,
+via. O bonsai ganha um tronco sombreado em S, ramos com nuvens de folhas (verdes, de outono
+ou em flor) e um vaso vidrado com terra e musgo; também pode crescer ao vivo (`-l`).
+É uma opção porque precisa de uma fonte com estes caracteres (Cascadia, Consolas,
 DejaVu Sans Mono, Meslo, as Nerd Fonts...) e fica melhor com cor de 24 bits (Windows
 Terminal, a maioria dos terminais Linux); com 256 ou 16 cores, as cores são aproximadas.
+
+### rnyancat
+
+```bash
+rnyancat
+rnyancat -n -s 2                   # sem contador, pixels do desenho duas vezes maiores
+rnyancat -f 100                    # parar ao fim de 100 imagens
+```
+
+Um gato com corpo de bolo voa por um céu estrelado, com um arco-íris atrás: sobe e desce,
+mexe as patas e a cauda, e as estrelas cintilam ao passar. O contador em baixo diz há
+quanto tempo está a voar (`-n` esconde-o). O desenho é original e é sempre feito no
+aspeto Unicode, ampliado para caber no terminal (ou `-s`). `-d` dá o tempo de cada
+imagem. q, Esc ou Ctrl+C para sair.
 
 ### rhollywood
 

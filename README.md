@@ -21,6 +21,7 @@ Every tool starts with **r** (for Rust).
 | `rtoilet` | toilet | Large coloured letters, with filters |
 | `rtty-clock` | tty-clock | A big digital clock |
 | `rasciiquarium` | asciiquarium | An aquarium: fish, sharks, a whale, a ship... |
+| `rnyancat` | nyancat | A cat with a pastry body flies through space on a rainbow |
 | `rhollywood` | hollywood | Panes of busy-looking "hacker" activity, as in the films |
 | `rrig` | rig | Random fictional identities for test data |
 
@@ -42,7 +43,7 @@ cargo install --path .
 - **Windows:** needs the MSVC build tools (`link.exe`, `cl.exe`) in the environment.
 - **Linux:** needs a C compiler (`gcc` or `clang`), used by rfetch's TLS library.
 
-The full-screen tools (rmatrix, rsl, rtty-clock, rasciiquarium, rhollywood) need a terminal.
+The full-screen tools (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rhollywood) need a terminal.
 
 `test.bat` (Windows) and `test.sh` (Linux) build everything and run a short demo of each tool.
 
@@ -113,9 +114,11 @@ rfortune --system                  # Linux: also /usr/share/games/fortunes
 rbonsai                            # print a tree
 rbonsai -l                         # watch it grow
 rbonsai -s 42 -M 8 -b 2            # seed, more branches, small pot
+rbonsai -u -f blossom -l           # Unicode look, in blossom (see below)
 ```
 
 The same seed gives the same tree (`-v` prints it). `-L` trunk length, `-W`/`-H` size.
+With `-u`, `-f` picks the leaves: green, autumn, blossom or random.
 
 ### rmatrix
 
@@ -181,7 +184,7 @@ Fish of several kinds swim both ways and blow bubbles, the seaweed sways, and no
 then a shark (it eats small fish), a whale with its spout, a ship or a jellyfish passes by.
 Keys: q quit, p pause, r restart.
 
-### The Unicode look (`-u`) of rasciiquarium and rsl
+### The Unicode look (`-u`) of rasciiquarium, rsl and rbonsai
 
 ![Unicode look](docs/unicode.png)
 
@@ -190,9 +193,25 @@ pixels with the half blocks `▀ ▄`, and a few symbols go on top (`○ ◦` bu
 stars). The aquarium gets a night sky with a crescent moon, waves, light rays, a sandy
 bottom and pixel creatures. The train gets a tender, carriages with passengers, turning
 wheels with coupling rods, rising smoke, and a landscape with clouds, hills and the track.
+The bonsai gets a shaded trunk with an S-curve, branches with pads of leaves (green,
+autumn or blossom), and a glazed pot with soil and moss; it can still grow live (`-l`).
 It is an option because it needs a font with these characters (Cascadia, Consolas, DejaVu
 Sans Mono, Meslo, the Nerd Fonts...) and looks best with 24-bit colour (Windows Terminal,
 most Linux terminals); with 256 or 16 colours the colours are approximated.
+
+### rnyancat
+
+```bash
+rnyancat
+rnyancat -n -s 2                   # no counter, art pixels twice as big
+rnyancat -f 100                    # stop after 100 frames
+```
+
+A cat with a pastry body flies through a starry sky, a rainbow behind it: it bobs,
+paddles and swings its tail, and the stars twinkle as they go by. The counter at the
+bottom says how long it has been flying (`-n` hides it). The art is original and is
+always drawn in the Unicode look, enlarged to fit the terminal (or `-s`). `-d` sets the
+time per frame. q, Esc or Ctrl+C quit.
 
 ### rhollywood
 

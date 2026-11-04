@@ -19,6 +19,7 @@ rboxes --list
 
 rbonsai -s 7
 rbonsai -l -M 7
+rbonsai -u -f random -l
 
 rmatrix -s 7
 rsl -n 3
@@ -34,4 +35,5 @@ rrig -C pt -o csv -c 3
 rtty-clock -s -x
 rasciiquarium
 rasciiquarium -u
+rnyancat
 rhollywood
