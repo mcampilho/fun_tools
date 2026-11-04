@@ -7,6 +7,7 @@ pub mod cow;
 pub mod fig;
 pub mod i18n;
 pub mod input;
+pub mod pix;
 pub mod pixfont;
 pub mod rng;
 pub mod term;

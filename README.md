@@ -133,6 +133,7 @@ where it changes, so it does not flicker.
 rsl
 rsl -l -F                          # a little flying train
 rsl -n 5                           # five carriages
+rsl -u                             # Unicode look (see below)
 ```
 
 q, Esc or Ctrl+C stop it.
@@ -173,11 +174,25 @@ The digits are coloured cells, so they have no gaps between rows.
 ```bash
 rasciiquarium
 rasciiquarium -n 9 -s 7            # more fish, faster
+rasciiquarium -u                   # Unicode look (see below)
 ```
 
 Fish of several kinds swim both ways and blow bubbles, the seaweed sways, and now and
 then a shark (it eats small fish), a whale with its spout, a ship or a jellyfish passes by.
 Keys: q quit, p pause, r restart.
+
+### The Unicode look (`-u`) of rasciiquarium and rsl
+
+![Unicode look](docs/unicode.png)
+
+With `-u, --unicode`, everything is colour pixel art: each terminal cell shows two square
+pixels with the half blocks `▀ ▄`, and a few symbols go on top (`○ ◦` bubbles, `✦ · ∙`
+stars). The aquarium gets a night sky with a crescent moon, waves, light rays, a sandy
+bottom and pixel creatures. The train gets a tender, carriages with passengers, turning
+wheels with coupling rods, rising smoke, and a landscape with clouds, hills and the track.
+It is an option because it needs a font with these characters (Cascadia, Consolas, DejaVu
+Sans Mono, Meslo, the Nerd Fonts...) and looks best with 24-bit colour (Windows Terminal,
+most Linux terminals); with 256 or 16 colours the colours are approximated.
 
 ### rhollywood
 

@@ -135,6 +135,7 @@ muda, por isso não cintila.
 rsl
 rsl -l -F                          # um comboio pequeno a voar
 rsl -n 5                           # cinco carruagens
+rsl -u                             # aspeto Unicode (ver abaixo)
 ```
 
 q, Esc ou Ctrl+C para o parar.
@@ -175,11 +176,25 @@ algarismos são células coloridas, por isso não têm riscos entre linhas.
 ```bash
 rasciiquarium
 rasciiquarium -n 9 -s 7            # mais peixes, mais depressa
+rasciiquarium -u                   # aspeto Unicode (ver abaixo)
 ```
 
 Peixes de vários tipos nadam para os dois lados e deitam bolhas, as algas ondulam e, de
 vez em quando, passa um tubarão (come os peixes pequenos), uma baleia com o seu repuxo, um
 barco ou uma medusa. Teclas: q sair, p pausa, r recomeçar.
+
+### O aspeto Unicode (`-u`) do rasciiquarium e do rsl
+
+![Aspeto Unicode](docs/unicode.png)
+
+Com `-u, --unicode`, tudo passa a pixel art a cores: cada célula do terminal mostra dois
+pixels quadrados com os meios blocos `▀ ▄`, e alguns símbolos ficam por cima (bolhas `○ ◦`,
+estrelas `✦ · ∙`). O aquário ganha um céu noturno com quarto crescente, ondas, raios de luz,
+um fundo de areia e criaturas em pixels. O comboio ganha um tender, carruagens com
+passageiros, rodas que giram com bielas, fumo a subir e uma paisagem com nuvens, colinas e a
+via. É uma opção porque precisa de uma fonte com estes caracteres (Cascadia, Consolas,
+DejaVu Sans Mono, Meslo, as Nerd Fonts...) e fica melhor com cor de 24 bits (Windows
+Terminal, a maioria dos terminais Linux); com 256 ou 16 cores, as cores são aproximadas.
 
 ### rhollywood
 

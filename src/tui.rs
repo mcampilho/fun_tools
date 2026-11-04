@@ -80,6 +80,12 @@ impl Canvas {
         }
     }
 
+    pub fn put(&mut self, x: i64, y: i64, cell: Cell) {
+        if x >= 0 && y >= 0 && (x as usize) < self.w && (y as usize) < self.h {
+            self.cells[y as usize * self.w + x as usize] = cell;
+        }
+    }
+
     /// A space on a coloured background: fills the whole cell (block glyphs may not).
     pub fn paint(&mut self, x: i64, y: i64, bg: Rgb) {
         if x >= 0 && y >= 0 && (x as usize) < self.w && (y as usize) < self.h {
@@ -94,6 +100,27 @@ impl Canvas {
                 self.set(x + i as i64, y, ch, fg, false);
             }
         }
+    }
+
+    /// The whole canvas as lines of text with colour codes (for snapshots).
+    pub fn to_ansi(&self, depth: Depth) -> String {
+        let mut s = String::new();
+        for y in 0..self.h {
+            for x in 0..self.w {
+                let c = self.cells[y * self.w + x];
+                s.push_str(term::RESET);
+                if let Some(rgb) = c.fg {
+                    s.push_str(&term::fg(depth, rgb));
+                }
+                if let Some(rgb) = c.bg {
+                    s.push_str(&term::color(depth, rgb, true));
+                }
+                s.push(c.ch);
+            }
+            s.push_str(term::RESET);
+            s.push('\n');
+        }
+        s
     }
 
     pub fn flush(&mut self, out: &mut impl Write, depth: Depth) -> io::Result<()> {
