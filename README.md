@@ -17,6 +17,15 @@ Every tool starts with **r** (for Rust).
 | `rbonsai` | cbonsai | Grows a random bonsai tree |
 | `rmatrix` | cmatrix | Falling digital rain |
 | `rsl` | sl | A steam train crosses the terminal |
+| `rfiglet` | figlet | Large letters made of characters |
+| `rtoilet` | toilet | Large coloured letters, with filters |
+| `rtty-clock` | tty-clock | A big digital clock |
+| `rasciiquarium` | asciiquarium | An aquarium: fish, sharks, a whale, a ship... |
+| `rhollywood` | hollywood | Panes of busy-looking "hacker" activity, as in the films |
+| `rrig` | rig | Random fictional identities for test data |
+
+All the art, fonts, sayings and data are original; FIGlet/TOIlet fonts installed on the
+system can be used too.
 
 ## Build and install
 
@@ -32,6 +41,8 @@ cargo install --path .
 
 - **Windows:** needs the MSVC build tools (`link.exe`, `cl.exe`) in the environment.
 - **Linux:** needs a C compiler (`gcc` or `clang`), used by rfetch's TLS library.
+
+The full-screen tools (rmatrix, rsl, rtty-clock, rasciiquarium, rhollywood) need a terminal.
 
 `test.bat` (Windows) and `test.sh` (Linux) build everything and run a short demo of each tool.
 
@@ -126,11 +137,78 @@ rsl -n 5                           # five carriages
 
 q, Esc or Ctrl+C stop it.
 
+### rfiglet / rtoilet
+
+```bash
+rfiglet "Hello"                    # "standard" if installed, else the built-in "hash"
+rfiglet -f pixel -c "Olá, Ação!"   # accented letters work in the built-in fonts
+rtoilet --gay "Rainbow"            # rtoilet: built-in "pixel" font and colour filters
+rtoilet -f tiny -F border:metal "Tiny"
+rfiglet -L                         # fonts: built-in and installed
+```
+
+Built-in fonts: pixel, tiny, hash, shade, drop (drawn from an original pixel font with
+the accented letters of Portuguese, Spanish and other western languages). FIGlet `.flf` and
+TOIlet `.tlf` fonts are found by name in `FIGLET_FONTDIR`, `TOILET_FONT_PATH`, a `fonts`
+folder next to the program, `%LOCALAPPDATA%\rfiglet\fonts` (Windows),
+`~/.local/share/rfiglet/fonts` and `/usr/share/figlet` (Linux), or given as a file; their
+kerning and smushing rules are followed. Options: `-w` width, `-c`/`-l`/`-r` alignment,
+`-k` kerning, `-W` full width, `-s` smushing; rtoilet also has `-F` filters
+(crop, rainbow/gay, metal, fire, flip, flop, rotate, border).
+
+### rtty-clock
+
+```bash
+rtty-clock -s                      # with seconds
+rtty-clock -t -C cyan -x           # 12 hours, cyan, in a box
+rtty-clock -r -S                   # bouncing screensaver: any key quits
+```
+
+Keys: q quit, s seconds, t 12/24 h, d date, r bounce, x box, b blinking colons,
+1 to 8 colour. The date is written in the chosen language (or `-f` strftime format).
+The digits are coloured cells, so they have no gaps between rows.
+
+### rasciiquarium
+
+```bash
+rasciiquarium
+rasciiquarium -n 9 -s 7            # more fish, faster
+```
+
+Fish of several kinds swim both ways and blow bubbles, the seaweed sways, and now and
+then a shark (it eats small fish), a whale with its spout, a ship or a jellyfish passes by.
+Keys: q quit, p pause, r restart.
+
+### rhollywood
+
+```bash
+rhollywood
+rhollywood -p 4 -i 5               # four panes, one changes every 5 s
+```
+
+Panes: memory dump, code being built, system log, network connections, process list,
+CPU meters, decryption progress bars, a signal scope and a digit stream. Everything shown
+is made up. Keys: q quit, space shuffle.
+
+### rrig
+
+```bash
+rrig                               # one identity, country from the language
+rrig -C pt -c 5 -e                 # five Portuguese identities, with e-mail
+rrig -C es -o csv -c 100 > test.csv
+rrig -o json -s 42                 # the same identities again with the same seed
+```
+
+Countries: us, pt, es. All of it is fictional: US phone numbers use the 555-01xx range
+reserved for fiction and e-mails use the example.com/.org/.net domains.
+
 ## Project structure
 
 ```text
 src/lib.rs        shared code: cli, i18n, input, rng, term (colours), text (widths), tui
 src/cow.rs        rcowsay and rcowthink
+src/fig.rs        rfiglet and rtoilet (FIGlet layout, fonts, filters)
+src/pixfont.rs    the original pixel font (built-in fonts, rtty-clock)
 src/bin/*.rs      one file per tool
 src/bin/rfetch/   rfetch (several modules)
 tools/            rfetch logo generator

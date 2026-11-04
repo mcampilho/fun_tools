@@ -8,6 +8,8 @@ license = "MIT"
 [dependencies]
 crossterm = "0.28"
 unicode-width = "0.2"
+# Local time and time zones (rtty-clock).
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 
 # rfetch
 # Only the parts of sysinfo we use: no rayon thread pool, no network/components.

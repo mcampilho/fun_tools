@@ -17,6 +17,15 @@ Todas as tools começam por **r** (de Rust).
 | `rbonsai` | cbonsai | Faz crescer um bonsai ao acaso |
 | `rmatrix` | cmatrix | Chuva digital a cair |
 | `rsl` | sl | Um comboio a vapor atravessa o terminal |
+| `rfiglet` | figlet | Letras grandes feitas de caracteres |
+| `rtoilet` | toilet | Letras grandes e coloridas, com filtros |
+| `rtty-clock` | tty-clock | Um relógio digital grande |
+| `rasciiquarium` | asciiquarium | Um aquário: peixes, tubarões, uma baleia, um barco... |
+| `rhollywood` | hollywood | Painéis com atividade de "hacker" muito ocupada, como nos filmes |
+| `rrig` | rig | Identidades fictícias ao acaso para dados de teste |
+
+Todos os desenhos, fontes, frases e dados são originais; também se podem usar as fontes
+FIGlet/TOIlet instaladas no sistema.
 
 ## Compilar e instalar
 
@@ -32,6 +41,8 @@ cargo install --path .
 
 - **Windows:** precisa das ferramentas de compilação MSVC (`link.exe`, `cl.exe`) no ambiente.
 - **Linux:** precisa de um compilador de C (`gcc` ou `clang`), usado pela biblioteca de TLS do rfetch.
+
+As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rhollywood) precisam de um terminal.
 
 `test.bat` (Windows) e `test.sh` (Linux) compilam tudo e mostram uma pequena demonstração de cada tool.
 
@@ -128,11 +139,78 @@ rsl -n 5                           # cinco carruagens
 
 q, Esc ou Ctrl+C para o parar.
 
+### rfiglet / rtoilet
+
+```bash
+rfiglet "Olá"                      # "standard" se estiver instalada, senão a "hash" embutida
+rfiglet -f pixel -c "Olá, Ação!"   # as fontes embutidas têm as letras acentuadas
+rtoilet --gay "Arco-íris"          # rtoilet: fonte embutida "pixel" e filtros de cor
+rtoilet -f tiny -F border:metal "Tiny"
+rfiglet -L                         # fontes: embutidas e instaladas
+```
+
+Fontes embutidas: pixel, tiny, hash, shade, drop (desenhadas a partir de uma fonte de
+pixels original, com as letras acentuadas do português, do espanhol e de outras línguas
+ocidentais). As fontes FIGlet `.flf` e TOIlet `.tlf` são procuradas pelo nome em
+`FIGLET_FONTDIR`, `TOILET_FONT_PATH`, numa pasta `fonts` ao lado do programa,
+`%LOCALAPPDATA%\rfiglet\fonts` (Windows), `~/.local/share/rfiglet/fonts` e `/usr/share/figlet`
+(Linux), ou indicadas como ficheiro; são seguidas as suas regras de encaixe e fusão. Opções:
+`-w` largura, `-c`/`-l`/`-r` alinhamento, `-k` encaixe, `-W` largura total, `-s` fusão; o
+rtoilet tem também `-F` filtros (crop, rainbow/gay, metal, fire, flip, flop, rotate, border).
+
+### rtty-clock
+
+```bash
+rtty-clock -s                      # com segundos
+rtty-clock -t -C cyan -x           # 12 horas, ciano, numa caixa
+rtty-clock -r -S                   # protetor de ecrã aos saltos: qualquer tecla sai
+```
+
+Teclas: q sair, s segundos, t 12/24 h, d data, r saltar, x caixa, b dois pontos a piscar,
+1 a 8 cor. A data é escrita no idioma escolhido (ou no formato strftime de `-f`). Os
+algarismos são células coloridas, por isso não têm riscos entre linhas.
+
+### rasciiquarium
+
+```bash
+rasciiquarium
+rasciiquarium -n 9 -s 7            # mais peixes, mais depressa
+```
+
+Peixes de vários tipos nadam para os dois lados e deitam bolhas, as algas ondulam e, de
+vez em quando, passa um tubarão (come os peixes pequenos), uma baleia com o seu repuxo, um
+barco ou uma medusa. Teclas: q sair, p pausa, r recomeçar.
+
+### rhollywood
+
+```bash
+rhollywood
+rhollywood -p 4 -i 5               # quatro painéis, um muda a cada 5 s
+```
+
+Painéis: memória, código a compilar, registo do sistema, ligações de rede, lista de
+processos, medidores de CPU, barras de desencriptação, um osciloscópio e um fluxo de
+algarismos. É tudo inventado. Teclas: q sair, espaço baralhar.
+
+### rrig
+
+```bash
+rrig                               # uma identidade, país conforme o idioma
+rrig -C pt -c 5 -e                 # cinco identidades portuguesas, com e-mail
+rrig -C es -o csv -c 100 > teste.csv
+rrig -o json -s 42                 # as mesmas identidades outra vez, com a mesma semente
+```
+
+Países: us, pt, es. É tudo fictício: os telefones dos EUA usam a gama 555-01xx, reservada
+para ficção, e os e-mails usam os domínios example.com/.org/.net.
+
 ## Estrutura do projeto
 
 ```text
 src/lib.rs        código comum: cli, i18n, input, rng, term (cores), text (larguras), tui
 src/cow.rs        rcowsay e rcowthink
+src/fig.rs        rfiglet e rtoilet (layout FIGlet, fontes, filtros)
+src/pixfont.rs    a fonte de pixels original (fontes embutidas, rtty-clock)
 src/bin/*.rs      um ficheiro por tool
 src/bin/rfetch/   rfetch (vários módulos)
 tools/            gerador dos logótipos do rfetch

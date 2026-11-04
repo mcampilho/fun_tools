@@ -22,3 +22,14 @@ rbonsai -l -M 7
 
 rmatrix -s 7
 rsl -n 3
+
+rfiglet "fun_tools"
+rfiglet -f pixel -c "Olá, Ação!"
+rtoilet --gay Rust
+rtoilet -f tiny -F border:metal "Windows + Linux"
+rrig -c 2 -e
+rrig -C pt -o csv -c 3
+
+rtty-clock -s -x
+rasciiquarium
+rhollywood

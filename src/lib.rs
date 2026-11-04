@@ -4,8 +4,10 @@
 
 pub mod cli;
 pub mod cow;
+pub mod fig;
 pub mod i18n;
 pub mod input;
+pub mod pixfont;
 pub mod rng;
 pub mod term;
 pub mod text;

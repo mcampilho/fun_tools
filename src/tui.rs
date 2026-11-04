@@ -40,10 +40,11 @@ fn restore() {
 pub struct Cell {
     pub ch: char,
     pub fg: Option<Rgb>,
+    pub bg: Option<Rgb>,
     pub bold: bool,
 }
 
-const BLANK: Cell = Cell { ch: ' ', fg: None, bold: false };
+const BLANK: Cell = Cell { ch: ' ', fg: None, bg: None, bold: false };
 
 /// A screen-sized grid of characters. `flush` only writes the cells that changed
 /// since the last flush, so animations do not flicker.
@@ -75,7 +76,14 @@ impl Canvas {
 
     pub fn set(&mut self, x: i64, y: i64, ch: char, fg: Option<Rgb>, bold: bool) {
         if x >= 0 && y >= 0 && (x as usize) < self.w && (y as usize) < self.h {
-            self.cells[y as usize * self.w + x as usize] = Cell { ch, fg, bold };
+            self.cells[y as usize * self.w + x as usize] = Cell { ch, fg, bg: None, bold };
+        }
+    }
+
+    /// A space on a coloured background: fills the whole cell (block glyphs may not).
+    pub fn paint(&mut self, x: i64, y: i64, bg: Rgb) {
+        if x >= 0 && y >= 0 && (x as usize) < self.w && (y as usize) < self.h {
+            self.cells[y as usize * self.w + x as usize] = Cell { ch: ' ', fg: None, bg: Some(bg), bold: false };
         }
     }
 
@@ -91,7 +99,7 @@ impl Canvas {
     pub fn flush(&mut self, out: &mut impl Write, depth: Depth) -> io::Result<()> {
         let mut buf = String::with_capacity(4096);
         let mut cursor: Option<(usize, usize)> = None;
-        let mut style: Option<(Option<Rgb>, bool)> = None;
+        let mut style: Option<(Option<Rgb>, Option<Rgb>, bool)> = None;
         for y in 0..self.h {
             for x in 0..self.w {
                 let i = y * self.w + x;
@@ -103,7 +111,8 @@ impl Canvas {
                 if cursor != Some((x, y)) {
                     buf.push_str(&format!("\x1b[{};{}H", y + 1, x + 1));
                 }
-                let st = (c.fg.filter(|_| depth != Depth::None), c.bold);
+                let on = depth != Depth::None;
+                let st = (c.fg.filter(|_| on), c.bg.filter(|_| on), c.bold);
                 if style != Some(st) {
                     buf.push_str(term::RESET);
                     if c.bold {
@@ -112,9 +121,13 @@ impl Canvas {
                     if let Some(rgb) = st.0 {
                         buf.push_str(&term::fg(depth, rgb));
                     }
+                    if let Some(rgb) = st.1 {
+                        buf.push_str(&term::color(depth, rgb, true));
+                    }
                     style = Some(st);
                 }
-                buf.push(c.ch);
+                // Without colours a painted cell must still show: use a block.
+                buf.push(if c.bg.is_some() && !on { '#' } else { c.ch });
                 cursor = Some((x + 1, y));
             }
         }
