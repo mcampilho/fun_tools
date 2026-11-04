@@ -1,0 +1,35 @@
+[package]
+name = "fun"
+version = "0.2.0"
+edition = "2021"
+description = "Unix classics (cowsay, lolcat, fortune, boxes, bonsai, matrix, sl, fetch) in Rust, for Windows and Linux"
+license = "MIT"
+
+[dependencies]
+crossterm = "0.28"
+unicode-width = "0.2"
+
+# rfetch
+# Only the parts of sysinfo we use: no rayon thread pool, no network/components.
+sysinfo = { version = "0.33", default-features = false, features = ["system", "disk"] }
+iana-time-zone = "0.1"
+sys-locale = "0.3"
+# Small blocking HTTP client (no async runtime) with rustls.
+ureq = { version = "2.12", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_Globalization",
+    "Win32_System_Console",
+    "Win32_UI_Input_KeyboardAndMouse",
+] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
