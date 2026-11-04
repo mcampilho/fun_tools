@@ -27,6 +27,9 @@ Todas as tools começam por **r** (de Rust).
 | `rponysay` | ponysay | Um pónei em pixel art diz ou pensa uma mensagem |
 | `rgenact` | genact | Atividade a fingir: compilações, arranques, descargas, instalações |
 | `rhollywood` | hollywood | Painéis com atividade de "hacker" muito ocupada, como nos filmes |
+| `rblocks` | bastet | Blocos a cair; o modo maldoso dá sempre a peça de que menos precisa |
+| `rinvaders` | ninvaders | Abata as filas de invasores antes que aterrem |
+| `rsudoku` | nudoku | Sudoku: puzzles com uma só solução, em quatro dificuldades, ou impressos |
 | `rrig` | rig | Identidades fictícias ao acaso para dados de teste |
 
 Todos os desenhos, fontes, frases e dados são originais; também se podem usar as fontes
@@ -47,7 +50,7 @@ cargo install --path .
 - **Windows:** precisa das ferramentas de compilação MSVC (`link.exe`, `cl.exe`) no ambiente.
 - **Linux:** precisa de um compilador de C (`gcc` ou `clang`), usado pela biblioteca de TLS do rfetch.
 
-As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rhollywood) precisam de um terminal.
+As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rhollywood) e os jogos precisam de um terminal.
 
 `test.bat` (Windows) e `test.sh` (Linux) compilam tudo e mostram uma pequena demonstração de cada tool.
 
@@ -284,6 +287,37 @@ rhollywood -p 4 -i 5               # quatro painéis, um muda a cada 5 s
 Painéis: memória, código a compilar, registo do sistema, ligações de rede, lista de
 processos, medidores de CPU, barras de desencriptação, um osciloscópio e um fluxo de
 algarismos. É tudo inventado. Teclas: q sair, espaço baralhar.
+
+### Os jogos: rblocks, rinvaders, rsudoku
+
+![Jogos](docs/games.png)
+
+Os jogos são originais: partilham o género e as regras com os clássicos, não os nomes,
+os desenhos nem o aspeto.
+
+```bash
+rblocks                            # modo maldoso, como o bastet
+rblocks -m random -L 5             # peças justas, a partir do nível 5
+rinvaders
+rsudoku -d hard
+rsudoku -p 4 -d expert --solution > sudokus.txt   # puzzles para papel
+```
+
+- **rblocks**: ← → mover, ↑ rodar, z rodar ao contrário, ↓ mais depressa, espaço largar,
+  p pausa. Modos (`-m`): `evil` (por omissão; cada peça nova é a que menos lhe convém),
+  `random` (justo, em conjuntos de sete baralhados, com a próxima peça à vista) e `nice`
+  (a peça que mais ajuda). `-G` esconde onde a peça vai cair.
+- **rinvaders**: ← → mover, espaço disparar, p pausa. A formação acelera à medida que
+  encolhe; os escudos desfazem-se; o disco voador vale uma surpresa. Uma vida extra aos
+  1500 pontos; cada nível começa mais abaixo. `-L` nível inicial. O número de filas de
+  invasores depende da altura do terminal (de 2 a 5).
+- **rsudoku**: setas ou h j k l mover, 1-9 escrever, 0 apagar, c verificar, ? ajuda,
+  u desfazer, n novo puzzle, S solução. Os conflitos aparecem logo a vermelho. Cada puzzle
+  é feito na hora e tem uma só solução; `-s` repete um.
+
+O rblocks e o rinvaders guardam os dez melhores resultados (`-S` mostra-os) em
+`%LOCALAPPDATA%\rtools` (Windows) ou `~/.local/share/rtools` (Linux); `RTOOLS_DATA` escolhe
+outra pasta. Em todos os jogos, q ou Esc sai e n recomeça depois de um jogo acabar.
 
 ### rrig
 

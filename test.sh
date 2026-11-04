@@ -41,3 +41,7 @@ rnyancat
 rpipes -p 4 -R
 rhollywood
 rgenact --exit-after-time 20
+rsudoku -p 1 -d easy
+rblocks
+rinvaders
+rsudoku

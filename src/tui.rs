@@ -165,12 +165,20 @@ impl Canvas {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Input {
     None,
     /// q, Esc or Ctrl+C
     Quit,
     Resize,
     Key(char),
+    Left,
+    Right,
+    Up,
+    Down,
+    Enter,
+    /// Backspace or Delete
+    Erase,
 }
 
 /// Waits up to `timeout` for a key or a resize.
@@ -183,6 +191,12 @@ pub fn poll(timeout: Duration) -> io::Result<Input> {
             KeyCode::Esc | KeyCode::Char('q') | KeyCode::Char('Q') => Input::Quit,
             KeyCode::Char('c') if k.modifiers.contains(KeyModifiers::CONTROL) => Input::Quit,
             KeyCode::Char(c) => Input::Key(c),
+            KeyCode::Left => Input::Left,
+            KeyCode::Right => Input::Right,
+            KeyCode::Up => Input::Up,
+            KeyCode::Down => Input::Down,
+            KeyCode::Enter => Input::Enter,
+            KeyCode::Backspace | KeyCode::Delete => Input::Erase,
             _ => Input::None,
         },
         Event::Resize(..) => Input::Resize,

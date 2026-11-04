@@ -372,6 +372,9 @@ fn run(o: &mut Opts, t: &Texts) -> std::io::Result<()> {
                 _ => {}
             },
             Input::None => {}
+            // Arrows, Enter...: any key quits the screensaver.
+            _ if o.screensaver => return Ok(()),
+            _ => {}
         }
     }
 }

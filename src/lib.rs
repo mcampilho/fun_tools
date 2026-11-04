@@ -10,6 +10,7 @@ pub mod input;
 pub mod pix;
 pub mod pixfont;
 pub mod rng;
+pub mod scores;
 pub mod term;
 pub mod text;
 pub mod tui;

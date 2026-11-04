@@ -27,6 +27,9 @@ Every tool starts with **r** (for Rust).
 | `rponysay` | ponysay | A pixel-art pony says or thinks a message |
 | `rgenact` | genact | Fake busy activity: builds, boot logs, downloads, deployments |
 | `rhollywood` | hollywood | Panes of busy-looking "hacker" activity, as in the films |
+| `rblocks` | bastet | Falling blocks; the evil mode always gives the piece you need least |
+| `rinvaders` | ninvaders | Shoot down the rows of invaders before they land |
+| `rsudoku` | nudoku | Sudoku: puzzles with one solution, in four difficulties, or printed |
 | `rrig` | rig | Random fictional identities for test data |
 
 All the art, fonts, sayings and data are original; FIGlet/TOIlet fonts installed on the
@@ -47,7 +50,7 @@ cargo install --path .
 - **Windows:** needs the MSVC build tools (`link.exe`, `cl.exe`) in the environment.
 - **Linux:** needs a C compiler (`gcc` or `clang`), used by rfetch's TLS library.
 
-The full-screen tools (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rhollywood) need a terminal.
+The full-screen tools (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rhollywood) and the games need a terminal.
 
 `test.bat` (Windows) and `test.sh` (Linux) build everything and run a short demo of each tool.
 
@@ -282,6 +285,37 @@ rhollywood -p 4 -i 5               # four panes, one changes every 5 s
 Panes: memory dump, code being built, system log, network connections, process list,
 CPU meters, decryption progress bars, a signal scope and a digit stream. Everything shown
 is made up. Keys: q quit, space shuffle.
+
+### The games: rblocks, rinvaders, rsudoku
+
+![Games](docs/games.png)
+
+The games are original: they share their genre and rules with the classics, not their
+names, art or look.
+
+```bash
+rblocks                            # evil mode, like bastet
+rblocks -m random -L 5             # fair pieces, from level 5
+rinvaders
+rsudoku -d hard
+rsudoku -p 4 -d expert --solution > sudokus.txt   # puzzles for paper
+```
+
+- **rblocks**: ← → move, ↑ rotate, z rotate back, ↓ faster, space drop, p pause.
+  Modes (`-m`): `evil` (default; every new piece is the one that suits you least),
+  `random` (fair, shuffled sets of seven, with the next piece shown) and `nice`
+  (the most helpful piece). `-G` hides where the piece will land.
+- **rinvaders**: ← → move, space shoot, p pause. The formation speeds up as it shrinks;
+  the shields wear away; the saucer is worth a surprise. An extra life at 1500 points;
+  each level starts lower. `-L` starting level. The number of rows of invaders depends on
+  the terminal's height (2 to 5).
+- **rsudoku**: arrows or h j k l move, 1-9 write, 0 erase, c check, ? hint, u undo,
+  n new puzzle, S solution. Clashes show in red at once. Every puzzle is made on the spot
+  and has a single solution; `-s` repeats one.
+
+rblocks and rinvaders keep the ten best scores (`-S` shows them) in `%LOCALAPPDATA%\rtools`
+(Windows) or `~/.local/share/rtools` (Linux); `RTOOLS_DATA` chooses another folder.
+In every game, q or Esc quits and n starts again after a game ends.
 
 ### rrig
 
