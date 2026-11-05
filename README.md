@@ -295,8 +295,9 @@ rponysay -l                        # coats and kinds
 
 The ponies are original pixel art drawn by the program (they are not the characters of the
 original ponysay): three kinds (pony, unicorn, pegasus) and eight coats (coral, lilac, azure,
-lemon, jade, plum, snow, cocoa), chosen at random unless given. `-W` wrap width, `-n` no wrap,
-`-s` seed.
+lemon, jade, plum, snow, cocoa), chosen at random unless given. The message goes in a box with
+rounded corners, framed in a tone of the mane, with a pointed tail to the pony's face or, with
+`-t`, thought bubbles. `-W` wrap width, `-n` no wrap, `-s` seed.
 
 ### rgenact
 

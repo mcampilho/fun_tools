@@ -2,12 +2,11 @@
 //! original ponies drawn by the program.
 
 use fun::cli::{Arg, Cli};
-use fun::cow::balloon;
 use fun::i18n::Lang;
 use fun::pix::{mix, scale, Pixels};
 use fun::rng::Rng;
 use fun::term::{self, Depth, Rgb};
-use fun::text::{expand_tabs, wrap_text};
+use fun::text::{expand_tabs, width, wrap_text};
 use std::io::Write;
 
 struct Texts {
@@ -288,19 +287,51 @@ fn main() {
     let _ = std::io::stdout().write_all(render(&message, think, width, wrap, coat, kind, depth).as_bytes());
 }
 
+/// The tail of a spoken balloon: a wedge out of the gap in the bottom line
+/// (`╰──╮  ╭───╯`) whose sides meet in front of the pony's face.
+const SPEECH_TAIL: [&str; 3] = ["    ╲ │", "     ╲│", "      ╲"];
+/// The tail of a thought: bubbles shrinking towards the pony's head, the first
+/// one a small rounded box like the balloon.
+const THOUGHT_TAIL: [&str; 3] = [" ╭──╮", " ╰──╯ ○", "        ◦"];
+/// Columns where `╮` and `╭` open the bottom line for the speech tail.
+const GAP: (usize, usize) = (3, 6);
+
+/// A rounded box around the text, its frame drawn in `on`. Returns the box and
+/// the tail, whose rows go into the empty start of the pony's first rows.
+fn balloon(lines: &[String], think: bool, on: &str, off: &str) -> (String, [&'static str; 3]) {
+    // Wide enough for the gap the speech tail opens in the bottom line.
+    let w = lines.iter().map(|l| width(l)).max().unwrap_or(0).max(GAP.1 + 2);
+    let mut out = format!("{on}╭{}╮{off}\n", "─".repeat(w + 2));
+    for l in lines {
+        out.push_str(&format!("{on}│{off} {l}{} {on}│{off}\n", " ".repeat(w - width(l))));
+    }
+    if think {
+        out.push_str(&format!("{on}╰{}╯{off}\n", "─".repeat(w + 2)));
+        (out, THOUGHT_TAIL)
+    } else {
+        let (a, b) = GAP;
+        out.push_str(&format!("{on}╰{}╮{}╭{}╯{off}\n", "─".repeat(a - 1), " ".repeat(b - a - 1), "─".repeat(w + 2 - b)));
+        (out, SPEECH_TAIL)
+    }
+}
+
 fn render(message: &str, think: bool, width: usize, wrap: bool, coat: &Coat, kind: &str, depth: Depth) -> String {
     let message = expand_tabs(message.trim_end(), 8);
     let lines: Vec<String> = if wrap { wrap_text(&message, width) } else { message.lines().map(str::to_string).collect() };
     let lines = if lines.is_empty() { vec![String::new()] } else { lines };
-    let mut out = balloon(&lines, think);
-    // The link from the balloon down to the pony's head.
-    let link = if think { "o" } else { "\\" };
-    for i in 0..2 {
-        out.push_str(&format!("{}{link}\n", " ".repeat(4 + i)));
-    }
-    for l in pony(coat, kind).to_lines(depth) {
-        out.push_str("     ");
-        out.push_str(&l);
+    // The frame takes a soft tone of the pony's mane.
+    let on = term::fg(depth, mix(coat.mane, Rgb(160, 160, 170), 0.35));
+    let off = if on.is_empty() { "" } else { term::RESET };
+    let (mut out, tail) = balloon(&lines, think, &on, off);
+    for (i, l) in pony(coat, kind).to_lines(depth).iter().enumerate() {
+        let line = format!("     {l}");
+        let rest = line.trim_start_matches(' ');
+        let blank = if rest.is_empty() { usize::MAX } else { line.len() - rest.len() };
+        match tail.get(i).map(|t| (t, t.chars().count())) {
+            // The tail replaces spaces only, never the pony.
+            Some((t, n)) if n <= blank => out.push_str(&format!("{on}{t}{off}{}", line.get(n..).unwrap_or(""))),
+            _ => out.push_str(&line),
+        }
         out.push('\n');
     }
     out
@@ -315,11 +346,18 @@ mod tests {
         for c in COATS {
             for k in KINDS {
                 let s = render("Olá, mundo!", false, 40, true, c, k, Depth::None);
-                assert!(s.starts_with(" _____________\n< Olá, mundo! >\n"), "{s}");
+                assert!(s.starts_with("╭─────────────╮\n│ Olá, mundo! │\n╰──╮  ╭───────╯\n    ╲ │"), "{s}");
+                let rows: Vec<_> = s.lines().collect();
+                assert!(rows[4].starts_with("     ╲│ ") && rows[5].starts_with("      ╲ "), "{s}");
                 assert!(s.lines().count() > 15);
             }
         }
-        assert!(render("hm", true, 40, true, &COATS[0], "pony", Depth::None).contains("    o\n"));
+        let s = render("hm", true, 40, true, &COATS[0], "pony", Depth::None);
+        assert!(s.starts_with("╭──────────╮\n│ hm       │\n╰──────────╯\n ╭──╮"), "{s}");
+        // Every line of the box is as wide as its top, wide characters included.
+        let s = render("日本 ok\nnext", false, 40, false, &COATS[0], "pony", Depth::None);
+        let top = width(s.lines().next().unwrap());
+        assert!(s.lines().take(4).all(|l| width(l) == top), "{s}");
     }
 
     /// `cargo test --bin rponysay snapshot -- --ignored --nocapture`

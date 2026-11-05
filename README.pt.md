@@ -297,8 +297,9 @@ rponysay -l                        # pelagens e tipos
 
 Os póneis são pixel art original desenhada pelo programa (não são as personagens do ponysay
 original): três tipos (pony, unicorn, pegasus) e oito pelagens (coral, lilac, azure, lemon,
-jade, plum, snow, cocoa), escolhidos ao acaso se não forem indicados. `-W` largura, `-n` sem
-quebra de linhas, `-s` semente.
+jade, plum, snow, cocoa), escolhidos ao acaso se não forem indicados. A mensagem vai numa caixa
+de cantos arredondados, com a moldura num tom da crina, e um bico até à cara do pónei ou, com
+`-t`, bolhas de pensamento. `-W` largura, `-n` sem quebra de linhas, `-s` semente.
 
 ### rgenact
 
