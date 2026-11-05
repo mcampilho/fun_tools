@@ -331,6 +331,45 @@ rrig -o json -s 42                 # as mesmas identidades outra vez, com a mesm
 Países: us, pt, es. É tudo fictício: os telefones dos EUA usam a gama 555-01xx, reservada
 para ficção, e os e-mails usam os domínios example.com/.org/.net.
 
+## Origens
+
+Todas as tools daqui são programas novos, escritos de raiz, com desenhos e textos originais;
+nenhum código vem dos originais. Estes são os clássicos que as inspiraram, com um
+agradecimento aos seus autores.
+
+| Tool | Inspirada em | Autor(es) | Primeira versão | Página |
+|---|---|---|---|---|
+| rfetch | neofetch, screenFetch | Dylan Araps; Brett Bohnenkamper | 2015 (arquivado em 2024); 2010 | [neofetch](https://github.com/dylanaraps/neofetch), [screenFetch](https://github.com/KittyKatt/screenFetch) |
+| rcowsay, rcowthink | cowsay | Tony Monroe; mantido desde 2016 por Andrew Janke | 1999 | [cowsay-org/cowsay](https://github.com/cowsay-org/cowsay) |
+| rlolcat | lolcat | Moe (busyloop) | 2011 | [busyloop/lolcat](https://github.com/busyloop/lolcat) |
+| rboxes | boxes | Thomas Jensen | 1999 | [boxes.thomasjensen.com](https://boxes.thomasjensen.com/) |
+| rfortune | fortune | Ken Arnold (BSD fortune) | 1979 (Version 7 Unix) | [fortune-mod](https://github.com/shlomif/fortune-mod) |
+| rbonsai | cbonsai | John Allbritten (a partir do seu bonsai.sh, de 2019) | 2020 | [jallbrit/cbonsai](https://gitlab.com/jallbrit/cbonsai) |
+| rmatrix | cmatrix | Chris Allegretta; mantido por Abishek V. Ashok | 1999 | [abishekvashok/cmatrix](https://github.com/abishekvashok/cmatrix) |
+| rsl | sl | Toyoda Masashi | 1993 | [mtoyoda/sl](https://github.com/mtoyoda/sl) |
+| rfiglet | FIGlet | Glenn Chappell e Ian Chai; mantido por Claudio Matsuoka | 1991 ("newban"), 1993 (FIGlet 2.0) | [figlet.org](http://www.figlet.org/) |
+| rtoilet | TOIlet | Sam Hocevar (projeto libcaca) | 2006 | [caca.zoy.org/wiki/toilet](http://caca.zoy.org/wiki/toilet) |
+| rtty-clock | tty-clock | Martin Duquesnoy (xorg62) | 2008 | [xorg62/tty-clock](https://github.com/xorg62/tty-clock) |
+| rasciiquarium | Asciiquarium | Kirk Baucom | 2005 (1.0: 2 de setembro de 2005) | [robobunny.com](https://robobunny.com/projects/asciiquarium/html/) |
+| rnyancat | nyancat | Kevin Lange (klange); a animação Nyan Cat é de Christopher Torres (prguitarman), abril de 2011 | 2011 | [klange/nyancat](https://github.com/klange/nyancat) |
+| rhollywood | hollywood | Dustin Kirkland | 2014 | [dustinkirkland/hollywood](https://github.com/dustinkirkland/hollywood) |
+| rrig | rig (Random Identity Generator) | Ian Turner, a partir do programa de MS-DOS "fake" | 1999 | [rig.sourceforge.net](https://rig.sourceforge.net/) |
+| rpipes | pipes.sh | Matthew Simpson (fóruns do Arch Linux); Yu-Jie Lin; Pipeseroni desde 2015 | 2010 | [pipeseroni/pipes.sh](https://github.com/pipeseroni/pipes.sh) |
+| rponysay | ponysay | Erkin Batu Altunbaş, com Mattias Andrée e outros | 2012 | [erkin/ponysay](https://github.com/erkin/ponysay) |
+| rnms | no-more-secrets | Brian Barto (bartobri); o efeito vem do filme *Sneakers* (1992) | 2016 | [bartobri/no-more-secrets](https://github.com/bartobri/no-more-secrets) |
+| rgenact | genact | Sven-Hendrik Haase (svenstaro) | 2018 (primeira versão no crates.io) | [svenstaro/genact](https://github.com/svenstaro/genact) |
+| rblocks | bastet ("bastard tetris") | Federico Poloni, a partir do Petris de Peter Seidler | 2004 | [bastet](https://fph.altervista.org/prog/bastet.html) |
+| rinvaders | nInvaders | Thomas Dettbarn | 2002 | [ninvaders.sourceforge.net](http://ninvaders.sourceforge.net/) |
+| rsudoku | nudoku | Michael Vetter (jubalh) | 2015 (no GitHub) | [jubalh/nudoku](https://github.com/jubalh/nudoku) |
+
+Notas sobre as datas: o ano é o da primeira versão pública quando se conhece (pela história,
+pelo registo de alterações ou pela página de manual do próprio projeto); senão, o vestígio mais
+antigo encontrado. Para o nInvaders, o bastet e o nudoku é uma estimativa a partir do aviso de
+direitos de autor, do pacote ou do repositório mais antigos; o código do tty-clock tem direitos
+de autor de 2008. O fortune apareceu com o Version 7 Unix em 1979; o fortune do BSD, de Ken
+Arnold, é o que a maioria dos sistemas usa hoje. Os nomes, as personagens e os desenhos dos
+jogos originais não são usados.
+
 ## Estrutura do projeto
 
 ```text
