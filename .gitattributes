@@ -1,0 +1,4 @@
+# Shell scripts keep Unix line endings, batch files Windows ones.
+*.sh text eol=lf
+*.bat text eol=crlf
+*.png binary

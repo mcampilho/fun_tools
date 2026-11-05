@@ -385,3 +385,7 @@ docs/             images, rfetch documentation
 Each tool keeps its texts in one table per language (English, European Portuguese,
 Spanish); missing texts fall back to English. The list of languages is `LANGS` in
 `src/i18n.rs`.
+
+## License
+
+MIT: see [LICENSE](LICENSE).

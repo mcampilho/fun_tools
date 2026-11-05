@@ -2,8 +2,9 @@
 name = "fun"
 version = "0.2.0"
 edition = "2021"
-description = "Unix classics (cowsay, lolcat, fortune, boxes, bonsai, matrix, sl, fetch) in Rust, for Windows and Linux"
+description = "Classic Unix terminal toys and games, rewritten in Rust for Windows and Linux"
 license = "MIT"
+repository = "https://github.com/mcampilho/fun_tools"
 
 [dependencies]
 crossterm = "0.28"

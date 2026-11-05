@@ -387,3 +387,7 @@ docs/             imagens, documentação do rfetch
 
 Cada tool tem os seus textos numa tabela por idioma (inglês, português europeu, espanhol); os
 textos em falta ficam em inglês. A lista de idiomas é `LANGS` em `src/i18n.rs`.
+
+## Licença
+
+MIT: ver [LICENSE](LICENSE).
