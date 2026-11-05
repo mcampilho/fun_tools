@@ -31,6 +31,9 @@ trap 'rm -rf "$stage"' EXIT
 mkdir "$stage/$name"
 find "$CARGO_TARGET_DIR/$target/release" -maxdepth 1 -type f -perm -u+x -name 'r*' -exec cp {} "$stage/$name/" \;
 cp README.md README.pt.md LICENSE "$stage/$name/"
+# Files copied from a Windows drive (/mnt/...) all look executable: set the modes.
+chmod 755 "$stage/$name"/r*
+chmod 644 "$stage/$name/README.md" "$stage/$name/README.pt.md" "$stage/$name/LICENSE"
 mkdir -p "$out"
 tar -czf "$out/$name.tar.gz" -C "$stage" "$name"
 echo "$out/$name.tar.gz: $(ls "$stage/$name" | grep -c '^r') tools"

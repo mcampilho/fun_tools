@@ -46,7 +46,9 @@ if (-not $version) { Fail 'no version in Cargo.toml' }
 $tag = "v$version"
 $dist = Join-Path $root 'dist'
 New-Item -ItemType Directory -Force $dist | Out-Null
-Get-ChildItem $dist -Filter "fun_tools-$tag-*" | Remove-Item -Force
+# Only the packages being made again are replaced (-NoWindows keeps the .zip, ...).
+if (-not $NoWindows) { Remove-Item (Join-Path $dist "fun_tools-$tag-windows-*") -Force -ErrorAction SilentlyContinue }
+if (-not $NoLinux) { Remove-Item (Join-Path $dist "fun_tools-$tag-linux-*") -Force -ErrorAction SilentlyContinue }
 Write-Host "fun_tools $tag -> $dist"
 
 if (-not $NoWindows) {
