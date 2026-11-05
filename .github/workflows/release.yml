@@ -8,8 +8,12 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing tag to build and publish (e.g. v0.2.0)"
+        description: "Existing tag to build (e.g. v0.2.0)"
         required: true
+      publish:
+        description: "Publish the packages in the release (off: only build and test)"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -34,7 +38,7 @@ jobs:
             name: linux-x86_64
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ env.TAG }}
 
@@ -93,20 +97,21 @@ jobs:
           ls -l "$dir"
 
       - name: Provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: ${{ env.ASSET }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.name }}
           path: ${{ env.ASSET }}
 
   release:
     needs: build
+    if: github.event_name == 'push' || inputs.publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true
