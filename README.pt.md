@@ -24,6 +24,7 @@ Todas as tools começam por **r** (de Rust).
 | `rnyancat` | nyancat | Um gato com corpo de bolo voa pelo espaço num arco-íris |
 | `rpipes` | pipes.sh | Canos crescem pelo terminal e viram ao acaso |
 | `rnms` | no-more-secrets | Texto baralhado que se desencripta, como nos filmes |
+| `rfire` | aafire, cacafire | Um fogo arde no fundo do terminal, com faúlhas a saltar |
 | `rponysay` | ponysay | Um pónei em pixel art diz ou pensa uma mensagem |
 | `rgenact` | genact | Atividade a fingir: compilações, arranques, descargas, instalações |
 | `rhollywood` | hollywood | Painéis com atividade de "hacker" muito ocupada, como nos filmes |
@@ -86,7 +87,7 @@ cargo install --path .
 - **Windows:** precisa das ferramentas de compilação MSVC (`link.exe`, `cl.exe`) no ambiente.
 - **Linux:** precisa de um compilador de C (`gcc` ou `clang`), usado pela biblioteca de TLS do rfetch.
 
-As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rhollywood) e os jogos precisam de um terminal.
+As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rfire, rhollywood) e os jogos precisam de um terminal.
 
 `test.bat` (Windows) e `test.sh` (Linux) compilam tudo e mostram uma pequena demonstração de cada tool.
 
@@ -272,6 +273,34 @@ Opções: `-p` canos, `-f` passos por segundo, `-s` quão direitos, `-r` limpar 
 peças, `-R` começar ao acaso, `-K` manter a cor e o estilo ao passar a borda, `-B` sem negrito,
 `-C` sem cores. Teclas: q sair, espaço limpar, 1 a 9 velocidade.
 
+### rfire
+
+```bash
+rfire
+rfire -c                           # uma fogueira num monte de toros
+rfire -m chars -C                  # só caracteres, como o antigo aafire
+rfire -m braille -p gas -w 2       # pontos braille, chama de gás, algum vento
+```
+
+![Fogo: píxeis, fogueira, caracteres e braille](docs/fire.png)
+
+As chamas seguem o fogo clássico da demoscene que o aafire tornou famoso: cada ponto fica com a
+média de cinco pontos por baixo dele e arrefece um pouco, por isso o calor que entra no fundo
+sobe e vai-se apagando. Por cima disso, um mapa de ruído suave que sobe arrefece umas faixas
+mais depressa do que outras, o que divide as chamas em línguas; o combustível no fundo varia e
+aviva-se, e saltam faúlhas das pontas.
+
+- `-m` modo: `pixels` (meios blocos, dois píxeis quadrados por célula; por omissão), `chars`
+  (uma escala de brilho ` .:-=+*#%@` com dithering ordenado, colorida como no cacafire; com
+  `-C` só caracteres, como no aafire) ou `braille` (2 × 4 pontos por célula, o maior detalhe).
+- `-p` paleta: fire (fogo), gas (azul), toxic (verde), magic (roxo). `-i` altura das chamas
+  (1 a 10), `-w` vento (-5 a 5), `-c` fogueira, `-S` sem faúlhas, `-d` tempo de cada imagem,
+  `-f` parar ao fim de tantas imagens.
+- Teclas: q sair, espaço apagar ou voltar a acender, + e - (ou cima e baixo) altura das chamas,
+  esquerda e direita vento, p paleta, m modo, c fogueira, s faúlhas.
+
+Não precisa de nenhuma biblioteca (nem aalib, nem libcaca): tudo é desenhado pelo programa.
+
 ### rnms
 
 ```bash
@@ -392,6 +421,7 @@ agradecimento aos seus autores.
 | rhollywood | hollywood | Dustin Kirkland | 2014 | [dustinkirkland/hollywood](https://github.com/dustinkirkland/hollywood) |
 | rrig | rig (Random Identity Generator) | Ian Turner, a partir do programa de MS-DOS "fake" | 1999 | [rig.sourceforge.net](https://rig.sourceforge.net/) |
 | rpipes | pipes.sh | Matthew Simpson (fóruns do Arch Linux); Yu-Jie Lin; Pipeseroni desde 2015 | 2010 | [pipeseroni/pipes.sh](https://github.com/pipeseroni/pipes.sh) |
+| rfire | aafire, cacafire | aafire: Jan Hubička, como demonstração da AA-lib (AA-project, com Kamil Toman, Thomas A. K. Kjaer e Tim Newsome); cacafire, a adaptação para a libcaca: Sam Hocevar | 1998 (aafire); 2003 (cacafire) | [AA-lib](https://aa-project.sourceforge.net/aalib/), [libcaca](https://github.com/cacalabs/libcaca) |
 | rponysay | ponysay | Erkin Batu Altunbaş, com Mattias Andrée e outros | 2012 | [erkin/ponysay](https://github.com/erkin/ponysay) |
 | rnms | no-more-secrets | Brian Barto (bartobri); o efeito vem do filme *Sneakers* (1992) | 2016 | [bartobri/no-more-secrets](https://github.com/bartobri/no-more-secrets) |
 | rgenact | genact | Sven-Hendrik Haase (svenstaro) | 2018 (primeira versão no crates.io) | [svenstaro/genact](https://github.com/svenstaro/genact) |
@@ -403,7 +433,9 @@ Notas sobre as datas: o ano é o da primeira versão pública quando se conhece 
 pelo registo de alterações ou pela página de manual do próprio projeto); senão, o vestígio mais
 antigo encontrado. Para o nInvaders, o bastet e o nudoku é uma estimativa a partir do aviso de
 direitos de autor, do pacote ou do repositório mais antigos; o código do tty-clock tem direitos
-de autor de 2008. O fortune apareceu com o Version 7 Unix em 1979; o fortune do BSD, de Ken
+de autor de 2008; os anos do aafire e do cacafire vêm dos avisos de direitos de autor do
+código do cacafire (Jan Hubička 1998, Sam Hocevar desde 2003), e a própria AA-lib é de 1997.
+O fortune apareceu com o Version 7 Unix em 1979; o fortune do BSD, de Ken
 Arnold, é o que a maioria dos sistemas usa hoje. Os nomes, as personagens e os desenhos dos
 jogos originais não são usados.
 

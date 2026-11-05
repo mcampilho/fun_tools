@@ -24,6 +24,7 @@ Every tool starts with **r** (for Rust).
 | `rnyancat` | nyancat | A cat with a pastry body flies through space on a rainbow |
 | `rpipes` | pipes.sh | Pipes grow across the terminal, turning at random |
 | `rnms` | no-more-secrets | Scrambled text decrypts itself, as in the films |
+| `rfire` | aafire, cacafire | A fire burns at the bottom of the terminal, sparks flying off |
 | `rponysay` | ponysay | A pixel-art pony says or thinks a message |
 | `rgenact` | genact | Fake busy activity: builds, boot logs, downloads, deployments |
 | `rhollywood` | hollywood | Panes of busy-looking "hacker" activity, as in the films |
@@ -86,7 +87,7 @@ cargo install --path .
 - **Windows:** needs the MSVC build tools (`link.exe`, `cl.exe`) in the environment.
 - **Linux:** needs a C compiler (`gcc` or `clang`), used by rfetch's TLS library.
 
-The full-screen tools (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rhollywood) and the games need a terminal.
+The full-screen tools (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rfire, rhollywood) and the games need a terminal.
 
 `test.bat` (Windows) and `test.sh` (Linux) build everything and run a short demo of each tool.
 
@@ -270,6 +271,34 @@ Options: `-p` pipes, `-f` steps per second, `-s` straightness, `-r` clear after 
 `-R` random starts, `-K` keep colour and style across the edges, `-B` no bold, `-C` no colours.
 Keys: q quit, space clear, 1 to 9 speed.
 
+### rfire
+
+```bash
+rfire
+rfire -c                           # a campfire on a pile of logs
+rfire -m chars -C                  # characters only, like the old aafire
+rfire -m braille -p gas -w 2       # braille dots, a gas flame, some wind
+```
+
+![Fire: pixels, campfire, characters and braille](docs/fire.png)
+
+The flames follow the classic fire of the demo scene that aafire made famous: every point
+takes the average of five points below it and cools a little, so the heat fed in at the bottom
+rises and fades. On top of that, a scrolling map of soft noise cools some streaks faster than
+others, which splits the flames into tongues; the fuel at the bottom wanders and flares up, and
+sparks fly off the tips.
+
+- `-m` mode: `pixels` (half blocks, two square pixels per cell; the default), `chars` (a
+  brightness ramp ` .:-=+*#%@` with ordered dithering, coloured as in cacafire; with `-C`
+  characters only, as in aafire) or `braille` (2 × 4 dots per cell, the finest detail).
+- `-p` palette: fire, gas (blue), toxic (green), magic (purple). `-i` flame height (1 to 10),
+  `-w` wind (-5 to 5), `-c` campfire, `-S` no sparks, `-d` time per frame, `-f` stop after so
+  many frames.
+- Keys: q quit, space put out or light again, + and - (or up and down) flame height, left and
+  right wind, p palette, m mode, c campfire, s sparks.
+
+No library is needed (no aalib, no libcaca): everything is drawn by the program.
+
 ### rnms
 
 ```bash
@@ -390,6 +419,7 @@ their authors.
 | rhollywood | hollywood | Dustin Kirkland | 2014 | [dustinkirkland/hollywood](https://github.com/dustinkirkland/hollywood) |
 | rrig | rig (Random Identity Generator) | Ian Turner, after the MS-DOS program "fake" | 1999 | [rig.sourceforge.net](https://rig.sourceforge.net/) |
 | rpipes | pipes.sh | Matthew Simpson (Arch Linux forums); Yu-Jie Lin; Pipeseroni since 2015 | 2010 | [pipeseroni/pipes.sh](https://github.com/pipeseroni/pipes.sh) |
+| rfire | aafire, cacafire | aafire: Jan Hubička, as a demo of AA-lib (AA-project, with Kamil Toman, Thomas A. K. Kjaer and Tim Newsome); cacafire, its port to libcaca: Sam Hocevar | 1998 (aafire); 2003 (cacafire) | [AA-lib](https://aa-project.sourceforge.net/aalib/), [libcaca](https://github.com/cacalabs/libcaca) |
 | rponysay | ponysay | Erkin Batu Altunbaş, with Mattias Andrée and others | 2012 | [erkin/ponysay](https://github.com/erkin/ponysay) |
 | rnms | no-more-secrets | Brian Barto (bartobri); the effect is from the 1992 film *Sneakers* | 2016 | [bartobri/no-more-secrets](https://github.com/bartobri/no-more-secrets) |
 | rgenact | genact | Sven-Hendrik Haase (svenstaro) | 2018 (first version on crates.io) | [svenstaro/genact](https://github.com/svenstaro/genact) |
@@ -400,7 +430,9 @@ their authors.
 Notes on the dates: the year is the first public release when it is known (from the project's
 own history, changelog or man page), otherwise the oldest trace found. For nInvaders, bastet
 and nudoku it is an estimate from the oldest copyright notice, package or repository; tty-clock's
-code carries a 2008 copyright. fortune first shipped with Version 7 Unix in 1979; the
+code carries a 2008 copyright; aafire's and cacafire's years come from the copyright lines of
+the cacafire source (Jan Hubička 1998, Sam Hocevar from 2003), and AA-lib itself dates from
+1997. fortune first shipped with Version 7 Unix in 1979; the
 BSD fortune by Ken Arnold is the one most systems use today. The game names, characters
 and art of the originals are not used.
 

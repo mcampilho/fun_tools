@@ -39,6 +39,8 @@ rasciiquarium
 rasciiquarium -u
 rnyancat
 rpipes -p 4 -R
+rfire -c -f 300
+rfire -m braille -p gas -f 300
 rhollywood
 rgenact --exit-after-time 20
 rsudoku -p 1 -d easy
