@@ -35,6 +35,35 @@ Todas as tools começam por **r** (de Rust).
 Todos os desenhos, fontes, frases e dados são originais; também se podem usar as fontes
 FIGlet/TOIlet instaladas no sistema.
 
+## Transferir
+
+Os programas prontos a usar para Windows e Linux estão na
+[página das versões](https://github.com/mcampilho/fun_tools/releases):
+
+- `fun_tools-vX.Y.Z-windows-x86_64.zip`: Windows 10/11 (64 bits). Não é preciso instalar mais nada.
+- `fun_tools-vX.Y.Z-linux-x86_64.tar.gz`: qualquer distribuição Linux de 64 bits (binários estáticos).
+
+Descompacte e ponha a pasta no `PATH` (ou corra as tools a partir dela). Para confirmar que um
+ficheiro chegou intacto, compare o seu SHA-256 com o `SHA256SUMS.txt` da mesma versão:
+
+```bash
+sha256sum -c SHA256SUMS.txt --ignore-missing                                  # Linux
+```
+
+```powershell
+Get-FileHash .\fun_tools-vX.Y.Z-windows-x86_64.zip -Algorithm SHA256       # Windows
+```
+
+Cada ficheiro tem também uma atestação de origem: a prova de que foi o GitHub a compilá-lo a
+partir deste repositório. Com a GitHub CLI:
+
+```bash
+gh attestation verify fun_tools-vX.Y.Z-linux-x86_64.tar.gz --repo mcampilho/fun_tools
+```
+
+Uma nova versão faz-se acertando a versão no `Cargo.toml`, fazendo commit e enviando uma tag
+com a mesma versão (`git tag vX.Y.Z && git push origin vX.Y.Z`); o
+[workflow de release](.github/workflows/release.yml) compila, testa e publica.
 ## Compilar e instalar
 
 ```bash

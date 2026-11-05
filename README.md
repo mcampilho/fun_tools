@@ -35,6 +35,35 @@ Every tool starts with **r** (for Rust).
 All the art, fonts, sayings and data are original; FIGlet/TOIlet fonts installed on the
 system can be used too.
 
+## Download
+
+Ready-made programs for Windows and Linux are on the
+[releases page](https://github.com/mcampilho/fun_tools/releases):
+
+- `fun_tools-vX.Y.Z-windows-x86_64.zip`: Windows 10/11 (64-bit). Nothing else to install.
+- `fun_tools-vX.Y.Z-linux-x86_64.tar.gz`: any 64-bit Linux distribution (static binaries).
+
+Unpack it and put the folder in your `PATH` (or run the tools from it). To check that a
+file arrived intact, compare its SHA-256 with `SHA256SUMS.txt` from the same release:
+
+```bash
+sha256sum -c SHA256SUMS.txt --ignore-missing                                  # Linux
+```
+
+```powershell
+Get-FileHash .\fun_tools-vX.Y.Z-windows-x86_64.zip -Algorithm SHA256       # Windows
+```
+
+Each file also carries a build provenance attestation: proof that GitHub built it from this
+repository. With the GitHub CLI:
+
+```bash
+gh attestation verify fun_tools-vX.Y.Z-linux-x86_64.tar.gz --repo mcampilho/fun_tools
+```
+
+A new release is made by setting the version in `Cargo.toml`, committing, and pushing a tag
+with the same version (`git tag vX.Y.Z && git push origin vX.Y.Z`); the
+[release workflow](.github/workflows/release.yml) builds, tests and publishes it.
 ## Build and install
 
 ```bash
