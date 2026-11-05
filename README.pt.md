@@ -64,6 +64,13 @@ gh attestation verify fun_tools-vX.Y.Z-linux-x86_64.tar.gz --repo mcampilho/fun_
 Uma nova versão faz-se acertando a versão no `Cargo.toml`, fazendo commit e enviando uma tag
 com a mesma versão (`git tag vX.Y.Z && git push origin vX.Y.Z`); o
 [workflow de release](.github/workflows/release.yml) compila, testa e publica.
+
+Para fazer os mesmos pacotes no seu PC (Windows com as ferramentas MSVC e o WSL para o Linux),
+corra `tools\release.ps1`: compila e testa os dois e deixa-os, com o `SHA256SUMS.txt`, em
+`dist\`. `-NoTest`, `-NoLinux` e `-NoWindows` saltam partes; `-Publish` cria uma versão em
+rascunho no GitHub, para uma versão que ainda lá não esteja. A parte Linux precisa, uma vez,
+de `sudo apt install musl-tools` no WSL (ou corra `sh tools/release-linux.sh vX.Y.Z` em Linux).
+Os pacotes locais não têm atestação de origem, por isso as versões oficiais vêm do workflow.
 ## Compilar e instalar
 
 ```bash
@@ -408,7 +415,7 @@ src/fig.rs        rfiglet e rtoilet (layout FIGlet, fontes, filtros)
 src/pixfont.rs    a fonte de pixels original (fontes embutidas, rtty-clock)
 src/bin/*.rs      um ficheiro por tool
 src/bin/rfetch/   rfetch (vários módulos)
-tools/            gerador dos logótipos do rfetch
+tools/            gerador dos logótipos do rfetch, scripts de release locais
 docs/             imagens, documentação do rfetch
 ```
 

@@ -64,6 +64,13 @@ gh attestation verify fun_tools-vX.Y.Z-linux-x86_64.tar.gz --repo mcampilho/fun_
 A new release is made by setting the version in `Cargo.toml`, committing, and pushing a tag
 with the same version (`git tag vX.Y.Z && git push origin vX.Y.Z`); the
 [release workflow](.github/workflows/release.yml) builds, tests and publishes it.
+
+To make the same packages on your own PC (Windows with the MSVC tools, plus WSL for Linux),
+run `tools\release.ps1`: it builds and tests both, and leaves them with `SHA256SUMS.txt` in
+`dist\`. `-NoTest`, `-NoLinux` and `-NoWindows` skip parts; `-Publish` creates a draft
+release on GitHub for a version that is not there yet. The Linux part needs, once,
+`sudo apt install musl-tools` in WSL (or run `sh tools/release-linux.sh vX.Y.Z` on Linux).
+Local packages have no provenance attestation, so the official releases come from the workflow.
 ## Build and install
 
 ```bash
@@ -405,7 +412,7 @@ src/fig.rs        rfiglet and rtoilet (FIGlet layout, fonts, filters)
 src/pixfont.rs    the original pixel font (built-in fonts, rtty-clock)
 src/bin/*.rs      one file per tool
 src/bin/rfetch/   rfetch (several modules)
-tools/            rfetch logo generator
+tools/            rfetch logo generator, local release scripts
 docs/             images, rfetch documentation
 ```
 
