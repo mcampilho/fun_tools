@@ -1,6 +1,6 @@
 [package]
 name = "fun"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 # Oldest compiler that builds it (`is_multiple_of` and others); not tested on older ones.
 rust-version = "1.91"
