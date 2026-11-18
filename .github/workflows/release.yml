@@ -22,6 +22,8 @@ permissions:
 env:
   TAG: ${{ github.event.inputs.tag || github.ref_name }}
   CARGO_TERM_COLOR: always
+  # Same compiler as ci.yml.
+  RUST_VERSION: 1.100.0
 
 jobs:
   build:
@@ -42,24 +44,25 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ env.TAG }}
 
       - name: Version in Cargo.toml matches the tag
         shell: bash
         run: |
-          version=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
+          version=$(grep -m1 '^version = ' Cargo.toml | cut -d'"' -f2)
           if [ "v$version" != "$TAG" ]; then
             echo "::error::Cargo.toml has version $version but the tag is $TAG"
             exit 1
           fi
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca
         with:
+          toolchain: ${{ env.RUST_VERSION }}
           targets: ${{ matrix.target }}
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
         with:
           key: ${{ matrix.target }}
 
@@ -73,13 +76,28 @@ jobs:
         shell: bash
         env:
           RUSTFLAGS: ${{ runner.os == 'Windows' && '-C target-feature=+crt-static' || '' }}
-        run: cargo test --release --locked --target ${{ matrix.target }}
+        run: cargo test --release --locked --workspace --target ${{ matrix.target }}
 
       - name: Build
         shell: bash
         env:
           RUSTFLAGS: ${{ runner.os == 'Windows' && '-C target-feature=+crt-static' || '' }}
-        run: cargo build --release --locked --target ${{ matrix.target }}
+        run: cargo build --release --locked --workspace --target ${{ matrix.target }}
+
+      # Runs a few of the tools that were just built, so a package that builds but does not
+      # start (a missing library, a bad build flag) is not published.
+      - name: Smoke test
+        shell: bash
+        run: |
+          bin="target/${{ matrix.target }}/release"
+          ext=""; [ "$RUNNER_OS" = "Windows" ] && ext=".exe"
+          count=$(find "$bin" -maxdepth 1 -type f -name "r*$ext" ! -name "*.d" | wc -l)
+          echo "$count tools built"
+          [ "$count" -ge 27 ] || { echo "::error::expected at least 27 tools, found $count"; exit 1; }
+          "$bin/rcowsay$ext" "smoke test" | grep -q "smoke test"
+          echo "smoke" | "$bin/rboxes$ext" | grep -q "smoke"
+          "$bin/rfiglet$ext" ok | grep -q .
+          "$bin/rfetch$ext" -o | grep -q .
 
       - name: Package
         shell: bash
@@ -101,11 +119,11 @@ jobs:
           ls -l "$dir"
 
       - name: Provenance
-        uses: actions/attest-build-provenance@v4
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: ${{ env.ASSET }}
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ matrix.name }}
           path: ${{ env.ASSET }}
@@ -118,7 +136,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           path: dist
           merge-multiple: true

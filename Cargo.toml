@@ -1,39 +1,42 @@
-[package]
-name = "fun"
+[workspace]
+# The tools are in this package (src/bin/); rfetch has its own crate because it alone
+# needs the network and system-information libraries.
+members = ["rfetch"]
+default-members = [".", "rfetch"]
+resolver = "2"
+
+[workspace.package]
 version = "0.3.0"
 edition = "2021"
-# Oldest compiler that builds it (`is_multiple_of` and others); not tested on older ones.
+# Oldest compiler that builds the tools (the msrv job in .github/workflows/ci.yml checks it);
+# rfetch asks for more in its own Cargo.toml.
 rust-version = "1.91"
-description = "Classic Unix terminal toys and games, rewritten in Rust for Windows and Linux"
-readme = "README.md"
 license = "MIT"
 repository = "https://github.com/mcampilho/fun_tools"
 # Released as GitHub packages (see .github/workflows/release.yml), never on crates.io.
 publish = false
 
+[package]
+name = "fun"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Classic Unix terminal toys and games, rewritten in Rust for Windows and Linux"
+readme = "README.md"
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
 [dependencies]
 crossterm = "0.29"
 unicode-width = "0.2"
+# Language of the system (all the tools).
+sys-locale = "0.3"
 # Local time and time zones (rtty-clock).
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 
-# rfetch
-# Only the parts of sysinfo we use: no rayon thread pool, no network/components.
-sysinfo = { version = "0.40", default-features = false, features = ["system", "disk"] }
-iana-time-zone = "0.1"
-sys-locale = "0.3"
-# Small blocking HTTP client (no async runtime) with rustls.
-ureq = { version = "3.5", features = ["json"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.61", features = [
-    "Win32_Foundation",
-    "Win32_Globalization",
-    "Win32_System_Console",
-    "Win32_UI_Input_KeyboardAndMouse",
-] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_Console"] }
 
 [profile.release]
 opt-level = 3

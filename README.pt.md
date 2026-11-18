@@ -81,7 +81,7 @@ cargo build --release
 Os programas ficam em `target/release/`. Para os instalar todos em `~/.cargo/bin`:
 
 ```bash
-cargo install --path .
+cargo install --path . && cargo install --path rfetch
 ```
 
 - **Windows:** precisa das ferramentas de compilação MSVC (`link.exe`, `cl.exe`) no ambiente.
@@ -447,14 +447,14 @@ src/cow.rs        rcowsay e rcowthink
 src/fig.rs        rfiglet e rtoilet (layout FIGlet, fontes, filtros)
 src/pixfont.rs    a fonte de pixels original (fontes embutidas, rtty-clock)
 src/bin/*.rs      um ficheiro por tool
-src/bin/rfetch/   rfetch (vários módulos)
+rfetch/           rfetch, crate própria (vários módulos)
 tools/            gerador dos logótipos do rfetch, scripts de release locais
 docs/             imagens, documentação do rfetch
 demo.bat, demo.sh compilam tudo e mostram uma pequena demonstração de cada tool
 .github/          CI (fmt, clippy, testes), workflow de release, Dependabot
 ```
 
-Antes de um commit: `cargo fmt`, `cargo clippy --all-targets -- -D warnings` e `cargo test`
+Antes de um commit: `cargo fmt --all`, `cargo clippy --workspace --all-targets -- -D warnings` e `cargo test --workspace`
 (o CI corre as mesmas verificações em Windows e Linux).
 
 ## Idiomas

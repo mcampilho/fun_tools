@@ -71,10 +71,10 @@ as identificam). `--logo <nome>` força qualquer logótipo, por exemplo `--logo 
 `--logo debian-wsl`.
 
 Os logótipos são gerados por `tools/rfetch_logos.py` (formas simples → grelhas de texto em
-`src/bin/rfetch/logo/art.rs`, mais uma imagem de pré-visualização):
+`rfetch/src/logo/art.rs`, mais uma imagem de pré-visualização):
 
 ```bash
-python3 tools/rfetch_logos.py docs/rfetch-logos.png src/bin/rfetch/logo/art.rs
+python3 tools/rfetch_logos.py docs/rfetch-logos.png rfetch/src/logo/art.rs
 ```
 
 ## Rapidez e robustez
