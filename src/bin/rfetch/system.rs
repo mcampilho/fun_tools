@@ -91,7 +91,7 @@ pub fn collect() -> SysInfo {
     // Only refresh RAM. The CPU list is NOT loaded through sysinfo: on Windows it
     // sets up PDH performance counters, which takes from 0.5 s to several seconds.
     let mut sys =
-        System::new_with_specifics(RefreshKind::nothing().with_memory(MemoryRefreshKind::nothing().with_ram()));
+        System::new_with_specifics(RefreshKind::nothing().with_memory(MemoryRefreshKind::nothing().with_ram())).ok();
 
     let (os, os_id, os_id_like) = os_name();
     let cpu = cpu_brand(&mut sys).map(|b| b.split_whitespace().collect::<Vec<_>>().join(" ")).filter(|b| !b.is_empty());
@@ -103,14 +103,14 @@ pub fn collect() -> SysInfo {
         os_id,
         os_id_like,
         arch: System::cpu_arch(),
-        kernel: System::kernel_version(),
-        host: System::host_name().unwrap_or_else(|| "localhost".into()),
-        uptime_secs: System::uptime(),
+        kernel: System::kernel_version().ok(),
+        host: System::host_name().unwrap_or_else(|_| "localhost".into()),
+        uptime_secs: System::uptime().unwrap_or(0),
         cpu,
-        cores_physical: sys.physical_core_count(),
+        cores_physical: System::physical_core_count().ok(),
         cores_logical,
-        mem_used: sys.used_memory(),
-        mem_total: sys.total_memory(),
+        mem_used: sys.as_ref().map_or(0, System::used_memory),
+        mem_total: sys.as_ref().map_or(0, System::total_memory),
         disk: system_disk(),
         shell,
         flavor,
@@ -120,7 +120,7 @@ pub fn collect() -> SysInfo {
 
 /// CPU brand string: CPUID on x86 (instant), /proc/cpuinfo on other Linux CPUs,
 /// and sysinfo only as a last resort.
-fn cpu_brand(sys: &mut System) -> Option<String> {
+fn cpu_brand(sys: &mut Option<System>) -> Option<String> {
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     if let Some(b) = cpuid_brand() {
         return Some(b);
@@ -137,6 +137,7 @@ fn cpu_brand(sys: &mut System) -> Option<String> {
             return found;
         }
     }
+    let sys = sys.as_mut()?;
     sys.refresh_cpu_list(CpuRefreshKind::nothing());
     sys.cpus().first().map(|c| c.brand().to_string())
 }
@@ -179,16 +180,19 @@ fn os_name() -> (String, String, String) {
             .map(|v| v.trim().trim_matches(['"', '\'']).to_string())
             .filter(|v| !v.is_empty())
     };
-    let pretty =
-        get("PRETTY_NAME").or_else(|| get("NAME")).or_else(System::long_os_version).unwrap_or_else(|| "Linux".into());
+    let pretty = get("PRETTY_NAME")
+        .or_else(|| get("NAME"))
+        .or_else(|| System::long_os_version().ok())
+        .unwrap_or_else(|| "Linux".into());
     (pretty, get("ID").unwrap_or_else(System::distribution_id), get("ID_LIKE").unwrap_or_default())
 }
 
 #[cfg(windows)]
 fn os_name() -> (String, String, String) {
-    let mut name = System::long_os_version().unwrap_or_else(|| "Windows".into());
+    let mut name = System::long_os_version().unwrap_or_else(|_| "Windows".into());
     // The registry still says "Windows 10" on Windows 11; builds >= 22000 are 11.
-    let build: u32 = System::kernel_version().and_then(|k| k.split('.').next_back()?.trim().parse().ok()).unwrap_or(0);
+    let build: u32 =
+        System::kernel_version().ok().and_then(|k| k.split('.').next_back()?.trim().parse().ok()).unwrap_or(0);
     if build >= 22000 && name.contains("Windows 10") {
         name = name.replacen("Windows 10", "Windows 11", 1);
     }
@@ -197,7 +201,11 @@ fn os_name() -> (String, String, String) {
 
 #[cfg(not(any(target_os = "linux", windows)))]
 fn os_name() -> (String, String, String) {
-    (System::long_os_version().unwrap_or_else(|| std::env::consts::OS.into()), System::distribution_id(), String::new())
+    (
+        System::long_os_version().unwrap_or_else(|_| std::env::consts::OS.into()),
+        System::distribution_id(),
+        String::new(),
+    )
 }
 
 /// Usage of the disk holding the system (C:\ on Windows, / elsewhere).
@@ -208,8 +216,8 @@ fn system_disk() -> Option<DiskUsage> {
     } else {
         PathBuf::from("/")
     };
-    let disks = Disks::new_with_refreshed_list();
-    let disk = disks.list().iter().find(|d| same_path(d.mount_point(), &target))?;
+    let disks = Disks::new_with_refreshed_list().ok()?;
+    let disk = disks.iter().find(|d| same_path(d.mount_point(), &target))?;
     let total = disk.total_space();
     (total > 0).then(|| DiskUsage {
         mount: target.display().to_string(),
@@ -259,8 +267,9 @@ struct Proc {
 /// Parent processes, nearest first. Stops two levels above the first shell
 /// (enough to see a launcher such as git-cmd.exe). Only these few processes
 /// are refreshed, never the whole process list.
-fn ancestors(sys: &mut System) -> Vec<Proc> {
+fn ancestors(sys: &mut Option<System>) -> Vec<Proc> {
     let mut chain = Vec::new();
+    let Some(sys) = sys.as_mut() else { return chain };
     let Ok(mut pid) = sysinfo::get_current_pid() else { return chain };
     let kind = ProcessRefreshKind::nothing().with_exe(UpdateKind::OnlyIfNotSet);
     sys.refresh_processes_specifics(ProcessesToUpdate::Some(&[pid]), false, kind);
@@ -284,7 +293,7 @@ fn ancestors(sys: &mut System) -> Vec<Proc> {
     chain
 }
 
-fn detect_shell(sys: &mut System) -> (Option<String>, Flavor, Terminal) {
+fn detect_shell(sys: &mut Option<System>) -> (Option<String>, Flavor, Terminal) {
     let chain = ancestors(sys);
     let idx = chain.iter().position(|p| SHELLS.contains(&p.stem.as_str()));
     let flavor = flavor(&chain, idx);
