@@ -2,9 +2,14 @@
 name = "fun"
 version = "0.2.0"
 edition = "2021"
+# Oldest compiler that builds it (`is_multiple_of` and others); not tested on older ones.
+rust-version = "1.91"
 description = "Classic Unix terminal toys and games, rewritten in Rust for Windows and Linux"
+readme = "README.md"
 license = "MIT"
 repository = "https://github.com/mcampilho/fun_tools"
+# Released as GitHub packages (see .github/workflows/release.yml), never on crates.io.
+publish = false
 
 [dependencies]
 crossterm = "0.28"

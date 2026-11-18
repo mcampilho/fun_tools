@@ -89,7 +89,7 @@ cargo install --path .
 
 As tools de ecrã inteiro (rmatrix, rsl, rtty-clock, rasciiquarium, rnyancat, rpipes, rfire, rhollywood) e os jogos precisam de um terminal.
 
-`test.bat` (Windows) e `test.sh` (Linux) compilam tudo e mostram uma pequena demonstração de cada tool.
+`demo.bat` (Windows) e `demo.sh` (Linux) compilam tudo e mostram uma pequena demonstração de cada tool.
 
 ## Comum a todas as tools
 
@@ -450,7 +450,12 @@ src/bin/*.rs      um ficheiro por tool
 src/bin/rfetch/   rfetch (vários módulos)
 tools/            gerador dos logótipos do rfetch, scripts de release locais
 docs/             imagens, documentação do rfetch
+demo.bat, demo.sh compilam tudo e mostram uma pequena demonstração de cada tool
+.github/          CI (fmt, clippy, testes), workflow de release, Dependabot
 ```
+
+Antes de um commit: `cargo fmt`, `cargo clippy --all-targets -- -D warnings` e `cargo test`
+(o CI corre as mesmas verificações em Windows e Linux).
 
 ## Idiomas
 

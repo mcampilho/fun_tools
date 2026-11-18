@@ -1,4 +1,5 @@
-# Shell scripts keep Unix line endings, batch files Windows ones.
+# Text files are stored with LF; shell scripts keep it on checkout, batch files get CRLF.
+* text=auto eol=lf
 *.sh text eol=lf
 *.bat text eol=crlf
 *.png binary

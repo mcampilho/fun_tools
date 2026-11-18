@@ -15,10 +15,9 @@ on:
         type: boolean
         default: true
 
+# Least privilege: each job asks for what it needs.
 permissions:
-  contents: write
-  id-token: write
-  attestations: write
+  contents: read
 
 env:
   TAG: ${{ github.event.inputs.tag || github.ref_name }}
@@ -37,6 +36,11 @@ jobs:
             target: x86_64-unknown-linux-musl
             name: linux-x86_64
     runs-on: ${{ matrix.os }}
+    # Signing the provenance needs the OIDC token and the attestations API.
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -110,6 +114,9 @@ jobs:
     needs: build
     if: github.event_name == 'push' || inputs.publish
     runs-on: ubuntu-latest
+    # Creates the release and uploads the packages.
+    permissions:
+      contents: write
     steps:
       - uses: actions/download-artifact@v8
         with:
