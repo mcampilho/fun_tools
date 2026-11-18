@@ -1,6 +1,6 @@
 #!/bin/sh
 # Builds the Linux package (static musl binaries) for tools/release.ps1, or on
-# its own on any Linux:  sh tools/release-linux.sh v0.2.0 dist [notest]
+# its own on any Linux:  sh tools/release-linux.sh v1.0.0 dist [notest]
 set -e
 tag="$1"
 out="${2:-dist}"

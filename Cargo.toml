@@ -6,7 +6,7 @@ default-members = [".", "rfetch"]
 resolver = "2"
 
 [workspace.package]
-version = "0.3.0"
+version = "1.0.0"
 edition = "2021"
 # Oldest compiler that builds the tools (the msrv job in .github/workflows/ci.yml checks it);
 # rfetch asks for more in its own Cargo.toml.
