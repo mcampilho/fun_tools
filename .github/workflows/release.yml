@@ -93,7 +93,8 @@ jobs:
           ext=""; [ "$RUNNER_OS" = "Windows" ] && ext=".exe"
           count=$(find "$bin" -maxdepth 1 -type f -name "r*$ext" ! -name "*.d" | wc -l)
           echo "$count tools built"
-          [ "$count" -ge 27 ] || { echo "::error::expected at least 27 tools, found $count"; exit 1; }
+          # 23 files in src/bin/ plus rfetch; raise it when a tool is added.
+          [ "$count" -ge 24 ] || { echo "::error::expected at least 24 tools, found $count"; exit 1; }
           "$bin/rcowsay$ext" "smoke test" | grep -q "smoke test"
           echo "smoke" | "$bin/rboxes$ext" | grep -q "smoke"
           "$bin/rfiglet$ext" ok | grep -q .
