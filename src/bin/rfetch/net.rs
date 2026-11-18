@@ -45,14 +45,15 @@ pub fn collect(refresh: bool) -> NetInfo {
             return info;
         }
     }
-    let agent = ureq::AgentBuilder::new()
-        .timeout_connect(Duration::from_millis(1200))
-        .timeout(Duration::from_millis(2000))
+    let agent: ureq::Agent = ureq::Agent::config_builder()
+        .timeout_connect(Some(Duration::from_millis(1200)))
+        .timeout_global(Some(Duration::from_millis(2000)))
         .user_agent(concat!("rfetch/", env!("CARGO_PKG_VERSION")))
-        .build();
+        .build()
+        .into();
 
     let geo = GEO_PROVIDERS.iter().find_map(|url| {
-        let v: Value = agent.get(url).call().ok()?.into_json().ok()?;
+        let v: Value = agent.get(*url).call().ok()?.body_mut().read_json().ok()?;
         parse_geo(&v)
     });
     let weather =
@@ -91,7 +92,7 @@ fn fetch_weather(agent: &ureq::Agent, lat: f64, lon: f64) -> Option<Weather> {
     let url = format!(
         "https://api.open-meteo.com/v1/forecast?latitude={lat:.4}&longitude={lon:.4}&current=temperature_2m,weather_code"
     );
-    let v: Value = agent.get(&url).call().ok()?.into_json().ok()?;
+    let v: Value = agent.get(&url).call().ok()?.body_mut().read_json().ok()?;
     let current = v.get("current")?;
     Some(Weather {
         temp_c: current.get("temperature_2m")?.as_f64()?,
