@@ -124,10 +124,52 @@ impl Mode {
 
 /// Colour ramps from cool to hot: (heat, colour).
 const PALETTES: &[(&str, &[(f32, Rgb)])] = &[
-    ("fire", &[(0.0, Rgb(20, 0, 0)), (0.18, Rgb(110, 8, 0)), (0.34, Rgb(195, 30, 0)), (0.5, Rgb(240, 85, 0)), (0.66, Rgb(255, 145, 15)), (0.8, Rgb(255, 205, 55)), (0.92, Rgb(255, 240, 150)), (1.0, Rgb(255, 255, 235))]),
-    ("gas", &[(0.0, Rgb(0, 0, 30)), (0.2, Rgb(10, 20, 110)), (0.4, Rgb(25, 70, 210)), (0.6, Rgb(55, 145, 255)), (0.8, Rgb(140, 215, 255)), (1.0, Rgb(240, 250, 255))]),
-    ("toxic", &[(0.0, Rgb(0, 20, 0)), (0.2, Rgb(10, 80, 10)), (0.4, Rgb(35, 160, 20)), (0.6, Rgb(120, 225, 40)), (0.8, Rgb(210, 255, 110)), (1.0, Rgb(250, 255, 220))]),
-    ("magic", &[(0.0, Rgb(25, 0, 35)), (0.2, Rgb(85, 10, 115)), (0.4, Rgb(165, 30, 195)), (0.6, Rgb(230, 80, 225)), (0.8, Rgb(255, 160, 235)), (1.0, Rgb(255, 235, 255))]),
+    (
+        "fire",
+        &[
+            (0.0, Rgb(20, 0, 0)),
+            (0.18, Rgb(110, 8, 0)),
+            (0.34, Rgb(195, 30, 0)),
+            (0.5, Rgb(240, 85, 0)),
+            (0.66, Rgb(255, 145, 15)),
+            (0.8, Rgb(255, 205, 55)),
+            (0.92, Rgb(255, 240, 150)),
+            (1.0, Rgb(255, 255, 235)),
+        ],
+    ),
+    (
+        "gas",
+        &[
+            (0.0, Rgb(0, 0, 30)),
+            (0.2, Rgb(10, 20, 110)),
+            (0.4, Rgb(25, 70, 210)),
+            (0.6, Rgb(55, 145, 255)),
+            (0.8, Rgb(140, 215, 255)),
+            (1.0, Rgb(240, 250, 255)),
+        ],
+    ),
+    (
+        "toxic",
+        &[
+            (0.0, Rgb(0, 20, 0)),
+            (0.2, Rgb(10, 80, 10)),
+            (0.4, Rgb(35, 160, 20)),
+            (0.6, Rgb(120, 225, 40)),
+            (0.8, Rgb(210, 255, 110)),
+            (1.0, Rgb(250, 255, 220)),
+        ],
+    ),
+    (
+        "magic",
+        &[
+            (0.0, Rgb(25, 0, 35)),
+            (0.2, Rgb(85, 10, 115)),
+            (0.4, Rgb(165, 30, 195)),
+            (0.6, Rgb(230, 80, 225)),
+            (0.8, Rgb(255, 160, 235)),
+            (1.0, Rgb(255, 235, 255)),
+        ],
+    ),
 ];
 
 /// The colour of `heat` (0 to 1) on a ramp.
@@ -207,7 +249,9 @@ impl Fire {
             let (dx, dy) = if pass % 4 == 0 { (rx, 0) } else { (0, ry) };
             for y in 0..h {
                 for x in 0..w {
-                    let s = src[y * w + x] * 2.0 + src[((y + dy) % h) * w + (x + dx) % w] + src[((y + h - dy % h) % h) * w + (x + w - dx % w) % w];
+                    let s = src[y * w + x] * 2.0
+                        + src[((y + dy) % h) * w + (x + dx) % w]
+                        + src[((y + h - dy % h) % h) * w + (x + w - dx % w) % w];
                     cool[y * w + x] = s / 4.0;
                 }
             }
@@ -216,7 +260,21 @@ impl Fire {
         for v in &mut cool {
             *v = if hi > lo { (*v - lo) / (hi - lo) } else { 0.5 };
         }
-        Fire { cols, rows, mode, w, h, heat: vec![0.0; w * (h + 2)], fuel: vec![0.8; w], cool, scroll: 0, sparks: Vec::new(), rng, lit: true, tick: 0 }
+        Fire {
+            cols,
+            rows,
+            mode,
+            w,
+            h,
+            heat: vec![0.0; w * (h + 2)],
+            fuel: vec![0.8; w],
+            cool,
+            scroll: 0,
+            sparks: Vec::new(),
+            rng,
+            lit: true,
+            tick: 0,
+        }
     }
 
     /// How much fuel a column gets: everywhere, or only over the logs.
@@ -281,7 +339,11 @@ impl Fire {
                 if drift != 0.0 && self.rng.chance(drift.abs() as f64) {
                     sx -= drift.signum() as i64;
                 }
-                let sum = self.heat[r1 + edge(sx - 1)] + self.heat[r1 + edge(sx)] + self.heat[r1 + edge(sx + 1)] + self.heat[r2 + edge(sx - 1)] + self.heat[r2 + edge(sx + 1)];
+                let sum = self.heat[r1 + edge(sx - 1)]
+                    + self.heat[r1 + edge(sx)]
+                    + self.heat[r1 + edge(sx + 1)]
+                    + self.heat[r2 + edge(sx - 1)]
+                    + self.heat[r2 + edge(sx + 1)];
                 let k = self.cool[crow + edge(x as i64 - shear)];
                 let cooling = base * (0.3 + 1.9 * k * k.sqrt()) * (0.6 + 0.8 * self.rng.float() as f32);
                 self.heat[y * w + x] = (sum / 5.0 - cooling).max(0.0);
@@ -360,7 +422,9 @@ impl Fire {
                 for row in 0..self.rows {
                     for x in 0..self.cols {
                         let v = (self.at(x, 2 * row) + self.at(x, 2 * row + 1)) / 2.0;
-                        let i = (v * (RAMP.len() - 1) as f32 * 1.1 + bayer(x, row) - 0.5).round().clamp(0.0, (RAMP.len() - 1) as f32) as usize;
+                        let i = (v * (RAMP.len() - 1) as f32 * 1.1 + bayer(x, row) - 0.5)
+                            .round()
+                            .clamp(0.0, (RAMP.len() - 1) as f32) as usize;
                         if i > 0 {
                             c.set(x as i64, row as i64, RAMP[i], colored.then(|| shade(pal, v.max(0.12))), false);
                         }
@@ -369,7 +433,13 @@ impl Fire {
                 for s in &self.sparks {
                     let (x, row) = (s.x as i64, (s.y / 2.0) as i64);
                     if c.get(x as usize, row as usize).is_some_and(|cell| cell.ch == ' ') {
-                        let ch = if s.life > 0.6 { '*' } else if s.life > 0.3 { '+' } else { '.' };
+                        let ch = if s.life > 0.6 {
+                            '*'
+                        } else if s.life > 0.3 {
+                            '+'
+                        } else {
+                            '.'
+                        };
                         c.set(x, row, ch, colored.then(|| shade(pal, 0.7 + 0.3 * s.life)), false);
                     }
                 }
@@ -401,7 +471,13 @@ impl Fire {
                 for (i, (&b, &v)) in bits.iter().zip(&hot).enumerate() {
                     if b != 0 {
                         let ch = char::from_u32(0x2800 + b as u32).unwrap_or(' ');
-                        c.set((i % self.cols) as i64, (i / self.cols) as i64, ch, colored.then(|| shade(pal, v.max(0.15))), false);
+                        c.set(
+                            (i % self.cols) as i64,
+                            (i / self.cols) as i64,
+                            ch,
+                            colored.then(|| shade(pal, v.max(0.15))),
+                            false,
+                        );
                     }
                 }
             }
@@ -477,7 +553,16 @@ fn draw_logs(p: &mut Pixels, cols: usize, rows: usize, pal: &[(f32, Rgb)], tick:
 fn main() {
     let mut cli = Cli::new("rfire");
     let t = Lang::pick(cli.lang, &EN, &PT, &ES);
-    let mut o = Options { mode: Mode::Pixels, palette: 0, intensity: 6, wind: 0, campfire: false, sparks: true, delay: 35, frames: None };
+    let mut o = Options {
+        mode: Mode::Pixels,
+        palette: 0,
+        intensity: 6,
+        wind: 0,
+        campfire: false,
+        sparks: true,
+        delay: 35,
+        frames: None,
+    };
     let mut color = None;
     while let Some(a) = cli.next() {
         match a {
@@ -487,11 +572,18 @@ fn main() {
                 "-V" | "--version" => cli.version(),
                 "-m" | "--mode" => {
                     let v = cli.value(&opt).to_ascii_lowercase();
-                    o.mode = MODES.iter().find(|(n, _)| *n == v).map(|m| m.1).unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
+                    o.mode = MODES
+                        .iter()
+                        .find(|(n, _)| *n == v)
+                        .map(|m| m.1)
+                        .unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
                 }
                 "-p" | "--palette" => {
                     let v = cli.value(&opt).to_ascii_lowercase();
-                    o.palette = PALETTES.iter().position(|(n, _)| *n == v).unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
+                    o.palette = PALETTES
+                        .iter()
+                        .position(|(n, _)| *n == v)
+                        .unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
                 }
                 "-i" | "--intensity" => o.intensity = cli.number(&opt, 1..=10),
                 "-w" | "--wind" => o.wind = cli.number(&opt, -5..=5),
@@ -639,7 +731,12 @@ mod tests {
                         f.draw(&o, &mut c, depth);
                     }
                     if cols >= 80 {
-                        let filled = (0..cols).filter(|&x| c.get(x, rows - 3).is_some_and(|cell| cell != Cell { ch: ' ', fg: None, bg: None, bold: false })).count();
+                        let filled = (0..cols)
+                            .filter(|&x| {
+                                c.get(x, rows - 3)
+                                    .is_some_and(|cell| cell != Cell { ch: ' ', fg: None, bg: None, bold: false })
+                            })
+                            .count();
                         assert!(filled > cols / 4, "{mode:?} {campfire}: {filled}");
                     }
                 }
@@ -653,7 +750,8 @@ mod tests {
     #[ignore]
     fn snapshot() {
         let env = |k: &str| std::env::var(k).ok();
-        let mode = env("SNAP_MODE").and_then(|m| MODES.iter().find(|(n, _)| *n == m).map(|m| m.1)).unwrap_or(Mode::Pixels);
+        let mode =
+            env("SNAP_MODE").and_then(|m| MODES.iter().find(|(n, _)| *n == m).map(|m| m.1)).unwrap_or(Mode::Pixels);
         let mut o = options(mode);
         o.palette = env("SNAP_PAL").and_then(|p| PALETTES.iter().position(|(n, _)| *n == p)).unwrap_or(0);
         o.campfire = env("SNAP_CAMP").is_some();

@@ -114,14 +114,62 @@ struct Coat {
 }
 
 const COATS: &[Coat] = &[
-    Coat { name: "coral", body: Rgb(250, 170, 150), mane: Rgb(120, 60, 170), streak: Rgb(250, 230, 120), eye: Rgb(60, 150, 90) },
-    Coat { name: "lilac", body: Rgb(205, 175, 235), mane: Rgb(45, 70, 150), streak: Rgb(235, 90, 160), eye: Rgb(120, 60, 170) },
-    Coat { name: "azure", body: Rgb(150, 205, 245), mane: Rgb(240, 240, 250), streak: Rgb(110, 170, 240), eye: Rgb(200, 80, 60) },
-    Coat { name: "lemon", body: Rgb(250, 235, 140), mane: Rgb(240, 120, 60), streak: Rgb(200, 50, 60), eye: Rgb(60, 110, 200) },
-    Coat { name: "jade", body: Rgb(150, 220, 180), mane: Rgb(30, 110, 110), streak: Rgb(245, 200, 80), eye: Rgb(150, 90, 40) },
-    Coat { name: "plum", body: Rgb(150, 90, 150), mane: Rgb(250, 200, 230), streak: Rgb(120, 220, 240), eye: Rgb(240, 180, 60) },
-    Coat { name: "snow", body: Rgb(245, 245, 248), mane: Rgb(90, 160, 235), streak: Rgb(170, 110, 230), eye: Rgb(60, 140, 200) },
-    Coat { name: "cocoa", body: Rgb(170, 120, 85), mane: Rgb(250, 230, 200), streak: Rgb(230, 120, 90), eye: Rgb(70, 160, 120) },
+    Coat {
+        name: "coral",
+        body: Rgb(250, 170, 150),
+        mane: Rgb(120, 60, 170),
+        streak: Rgb(250, 230, 120),
+        eye: Rgb(60, 150, 90),
+    },
+    Coat {
+        name: "lilac",
+        body: Rgb(205, 175, 235),
+        mane: Rgb(45, 70, 150),
+        streak: Rgb(235, 90, 160),
+        eye: Rgb(120, 60, 170),
+    },
+    Coat {
+        name: "azure",
+        body: Rgb(150, 205, 245),
+        mane: Rgb(240, 240, 250),
+        streak: Rgb(110, 170, 240),
+        eye: Rgb(200, 80, 60),
+    },
+    Coat {
+        name: "lemon",
+        body: Rgb(250, 235, 140),
+        mane: Rgb(240, 120, 60),
+        streak: Rgb(200, 50, 60),
+        eye: Rgb(60, 110, 200),
+    },
+    Coat {
+        name: "jade",
+        body: Rgb(150, 220, 180),
+        mane: Rgb(30, 110, 110),
+        streak: Rgb(245, 200, 80),
+        eye: Rgb(150, 90, 40),
+    },
+    Coat {
+        name: "plum",
+        body: Rgb(150, 90, 150),
+        mane: Rgb(250, 200, 230),
+        streak: Rgb(120, 220, 240),
+        eye: Rgb(240, 180, 60),
+    },
+    Coat {
+        name: "snow",
+        body: Rgb(245, 245, 248),
+        mane: Rgb(90, 160, 235),
+        streak: Rgb(170, 110, 230),
+        eye: Rgb(60, 140, 200),
+    },
+    Coat {
+        name: "cocoa",
+        body: Rgb(170, 120, 85),
+        mane: Rgb(250, 230, 200),
+        streak: Rgb(230, 120, 90),
+        eye: Rgb(70, 160, 120),
+    },
 ];
 
 const KINDS: &[&str] = &["pony", "unicorn", "pegasus"];
@@ -157,7 +205,18 @@ fn pony(coat: &Coat, kind: &str) -> Pixels {
     let body = coat.body;
     let shade = scale(body, 0.78);
     // Tail, behind everything.
-    hair(&mut p, &[(28.5, 19.0, 2.4), (30.5, 21.0, 2.6), (31.5, 24.0, 2.5), (31.0, 27.0, 2.3), (29.5, 29.5, 2.0), (31.8, 30.5, 1.6)], coat);
+    hair(
+        &mut p,
+        &[
+            (28.5, 19.0, 2.4),
+            (30.5, 21.0, 2.6),
+            (31.5, 24.0, 2.5),
+            (31.0, 27.0, 2.3),
+            (29.5, 29.5, 2.0),
+            (31.8, 30.5, 1.6),
+        ],
+        coat,
+    );
     // Far legs, darker.
     for x in [16.0, 25.0] {
         for y in 24..33 {
@@ -195,7 +254,19 @@ fn pony(coat: &Coat, kind: &str) -> Pixels {
     }
     p.put(13, 6, mix(body, Rgb(255, 150, 170), 0.5));
     // Mane: a forelock and locks down the neck.
-    hair(&mut p, &[(13.5, 6.0, 2.6), (15.5, 8.5, 2.6), (17.0, 11.5, 2.5), (18.0, 14.5, 2.3), (18.6, 17.3, 2.0), (10.5, 6.0, 2.2), (8.8, 6.6, 1.7)], coat);
+    hair(
+        &mut p,
+        &[
+            (13.5, 6.0, 2.6),
+            (15.5, 8.5, 2.6),
+            (17.0, 11.5, 2.5),
+            (18.0, 14.5, 2.3),
+            (18.6, 17.3, 2.0),
+            (10.5, 6.0, 2.2),
+            (8.8, 6.6, 1.7),
+        ],
+        coat,
+    );
     // Eye: white, iris, pupil and a highlight.
     blob(&mut p, 7.6, 10.4, 1.8, 2.3, Rgb(250, 250, 250));
     blob(&mut p, 7.0, 10.9, 1.3, 1.7, coat.eye);
@@ -242,7 +313,8 @@ fn pony(coat: &Coat, kind: &str) -> Pixels {
 fn main() {
     let mut cli = Cli::new("rponysay");
     let t = Lang::pick(cli.lang, &EN, &PT, &ES);
-    let (mut think, mut coat, mut kind, mut width, mut wrap, mut seed, mut color) = (false, None::<String>, None::<String>, 40usize, true, None::<u64>, None::<bool>);
+    let (mut think, mut coat, mut kind, mut width, mut wrap, mut seed, mut color) =
+        (false, None::<String>, None::<String>, 40usize, true, None::<u64>, None::<bool>);
     let mut words = Vec::new();
     while let Some(a) = cli.next() {
         match a {
@@ -310,14 +382,20 @@ fn balloon(lines: &[String], think: bool, on: &str, off: &str) -> (String, [&'st
         (out, THOUGHT_TAIL)
     } else {
         let (a, b) = GAP;
-        out.push_str(&format!("{on}╰{}╮{}╭{}╯{off}\n", "─".repeat(a - 1), " ".repeat(b - a - 1), "─".repeat(w + 2 - b)));
+        out.push_str(&format!(
+            "{on}╰{}╮{}╭{}╯{off}\n",
+            "─".repeat(a - 1),
+            " ".repeat(b - a - 1),
+            "─".repeat(w + 2 - b)
+        ));
         (out, SPEECH_TAIL)
     }
 }
 
 fn render(message: &str, think: bool, width: usize, wrap: bool, coat: &Coat, kind: &str, depth: Depth) -> String {
     let message = expand_tabs(message.trim_end(), 8);
-    let lines: Vec<String> = if wrap { wrap_text(&message, width) } else { message.lines().map(str::to_string).collect() };
+    let lines: Vec<String> =
+        if wrap { wrap_text(&message, width) } else { message.lines().map(str::to_string).collect() };
     let lines = if lines.is_empty() { vec![String::new()] } else { lines };
     // The frame takes a soft tone of the pony's mane.
     let on = term::fg(depth, mix(coat.mane, Rgb(160, 160, 170), 0.35));

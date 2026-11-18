@@ -108,8 +108,14 @@ const STYLES: &[(&str, &str)] = &[
 ];
 
 const COLORS: &[Rgb] = &[
-    Rgb(230, 70, 70), Rgb(90, 210, 90), Rgb(240, 200, 60), Rgb(80, 140, 250),
-    Rgb(210, 100, 220), Rgb(70, 210, 220), Rgb(235, 235, 235), Rgb(250, 140, 50),
+    Rgb(230, 70, 70),
+    Rgb(90, 210, 90),
+    Rgb(240, 200, 60),
+    Rgb(80, 140, 250),
+    Rgb(210, 100, 220),
+    Rgb(70, 210, 220),
+    Rgb(235, 235, 235),
+    Rgb(250, 140, 50),
 ];
 
 /// Directions: up, right, down, left.
@@ -205,7 +211,17 @@ impl Garden {
 fn main() {
     let mut cli = Cli::new("rpipes");
     let t = Lang::pick(cli.lang, &EN, &PT, &ES);
-    let mut o = Options { pipes: 1, styles: Vec::new(), fps: 75, straight: 13, reset: 2000, random: false, keep: false, bold: true, color: true };
+    let mut o = Options {
+        pipes: 1,
+        styles: Vec::new(),
+        fps: 75,
+        straight: 13,
+        reset: 2000,
+        random: false,
+        keep: false,
+        bold: true,
+        color: true,
+    };
     while let Some(a) = cli.next() {
         match a {
             Arg::Pos(p) => cli.unknown(&p),
@@ -299,7 +315,17 @@ mod tests {
         assert_eq!(piece(&s, 3, 0), '└'); // going left, then up
         assert_eq!(piece(&s, 1, 1), '─');
         assert!(STYLES.iter().all(|(_, s)| s.chars().count() >= 6));
-        let o = Options { pipes: 5, styles: vec![s], fps: 75, straight: 3, reset: 500, random: true, keep: false, bold: true, color: true };
+        let o = Options {
+            pipes: 5,
+            styles: vec![s],
+            fps: 75,
+            straight: 3,
+            reset: 500,
+            random: true,
+            keep: false,
+            bold: true,
+            color: true,
+        };
         let mut c = Canvas::new(40, 12);
         let mut g = Garden::new(&o, 40, 12, Rng::seeded(1));
         for _ in 0..2000 {
@@ -313,7 +339,17 @@ mod tests {
     #[ignore]
     fn snapshot() {
         let styles = (0..STYLES.len() - 1).map(|i| STYLES[i].1.chars().collect()).collect();
-        let o = Options { pipes: 6, styles, fps: 75, straight: 10, reset: 0, random: true, keep: false, bold: true, color: true };
+        let o = Options {
+            pipes: 6,
+            styles,
+            fps: 75,
+            straight: 10,
+            reset: 0,
+            random: true,
+            keep: false,
+            bold: true,
+            color: true,
+        };
         let mut c = Canvas::new(100, 28);
         let mut g = Garden::new(&o, 100, 28, Rng::seeded(5));
         for _ in 0..260 {

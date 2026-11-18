@@ -76,19 +76,9 @@ const FISH: &[&[&str]] = &[
     &["  _.-.", ">(_  o)>", "   `-'"],
 ];
 
-const SHARK: &[&str] = &[
-    "         |\\",
-    "  ___.---' `-----.__",
-    " <___  '     ___    o`>",
-    "     `--..__.'   `-'",
-];
+const SHARK: &[&str] = &["         |\\", "  ___.---' `-----.__", " <___  '     ___    o`>", "     `--..__.'   `-'"];
 
-const WHALE: &[&str] = &[
-    "      .-'\"\"'-.",
-    " \\  .'        `.",
-    "  >(   o        )",
-    " /  `.__..--.__.'",
-];
+const WHALE: &[&str] = &["      .-'\"\"'-.", " \\  .'        `.", "  >(   o        )", " /  `.__..--.__.'"];
 const SPOUT: &[&[&str]] = &[&["   :"], &["  .:.", "   :"], &[" .:.:.", "  .:.", "   :"], &["  . .", " .   .", "  . ."]];
 
 const SHIP: &[&str] = &["      |\\", "      | \\", "      |__\\", "  ____|_____", "  \\ o  o  o/"];
@@ -110,26 +100,9 @@ const CASTLE: &[&str] = &[
 // The Unicode look: pixel art, one character per pixel, two pixel rows per
 // terminal row. Letters are colours (see `pix::palette`); `.` is transparent.
 const FISH_PX: &[&[&str]] = &[
-    &[
-        "B...AAA.",
-        "BBAAAAKA",
-        "BBACCCAA",
-        "B...AA..",
-    ],
-    &[
-        "....BBBB....",
-        "B..AAAAAAA..",
-        "BBAAAAAAWKA.",
-        "BBAACCCCAAAA",
-        "B..ACCCCAA..",
-        ".....BB.....",
-    ],
-    &[
-        "B.....BBBB......",
-        "BBAAAAAAAAAAAWK.",
-        "BBACCCCCCCCCAAAA",
-        "B......BB.......",
-    ],
+    &["B...AAA.", "BBAAAAKA", "BBACCCAA", "B...AA.."],
+    &["....BBBB....", "B..AAAAAAA..", "BBAAAAAAWKA.", "BBAACCCCAAAA", "B..ACCCCAA..", ".....BB....."],
+    &["B.....BBBB......", "BBAAAAAAAAAAAWK.", "BBACCCCCCCCCAAAA", "B......BB......."],
     &[
         "......B....",
         ".....BA....",
@@ -142,16 +115,7 @@ const FISH_PX: &[&[&str]] = &[
         ".....BC....",
         "......B....",
     ],
-    &[
-        "..B.B.B...",
-        ".BAAAAAAB.",
-        "BAAAAAAWKA",
-        "BBAAAAAAAA",
-        "BBACCCCCAA",
-        "BACCCCCCAB",
-        ".BCCCCCCB.",
-        "..B.B.B...",
-    ],
+    &["..B.B.B...", ".BAAAAAAB.", "BAAAAAAWKA", "BBAAAAAAAA", "BBACCCCCAA", "BACCCCCCAB", ".BCCCCCCB.", "..B.B.B..."],
 ];
 
 const SHARK_PX: &[&str] = &[
@@ -306,7 +270,11 @@ const PIXEL_ART: Art = Art {
 
 impl Art {
     fn flip(&self, art: &[&str]) -> Vec<String> {
-        if self.pixels { pix::mirror(art) } else { mirror(art) }
+        if self.pixels {
+            pix::mirror(art)
+        } else {
+            mirror(art)
+        }
     }
 }
 
@@ -317,8 +285,14 @@ const WEED: Rgb = Rgb(40, 170, 70);
 const STONE: Rgb = Rgb(160, 160, 170);
 const WHITE: Rgb = Rgb(240, 240, 240);
 const FISH_COLORS: &[Rgb] = &[
-    Rgb(255, 120, 60), Rgb(255, 210, 60), Rgb(90, 220, 120), Rgb(240, 90, 160),
-    Rgb(120, 170, 255), Rgb(200, 120, 255), Rgb(80, 220, 220), Rgb(255, 90, 90),
+    Rgb(255, 120, 60),
+    Rgb(255, 210, 60),
+    Rgb(90, 220, 120),
+    Rgb(240, 90, 160),
+    Rgb(120, 170, 255),
+    Rgb(200, 120, 255),
+    Rgb(80, 220, 220),
+    Rgb(255, 90, 90),
 ];
 
 fn mirror(art: &[&str]) -> Vec<String> {
@@ -330,8 +304,18 @@ fn mirror(art: &[&str]) -> Vec<String> {
             s.iter()
                 .rev()
                 .map(|&c| match c {
-                    '(' => ')', ')' => '(', '<' => '>', '>' => '<', '/' => '\\', '\\' => '/',
-                    '[' => ']', ']' => '[', '{' => '}', '}' => '{', '`' => '\'', '\'' => '`',
+                    '(' => ')',
+                    ')' => '(',
+                    '<' => '>',
+                    '>' => '<',
+                    '/' => '\\',
+                    '\\' => '/',
+                    '[' => ']',
+                    ']' => '[',
+                    '{' => '}',
+                    '}' => '{',
+                    '`' => '\'',
+                    '\'' => '`',
                     c => c,
                 })
                 .collect::<String>()
@@ -396,7 +380,8 @@ fn art_width(art: &[&str]) -> i64 {
 impl Tank {
     fn new(art: &'static Art, w: usize, h: usize, fish_level: f64, rng: Rng) -> Tank {
         let (w, h) = (w as i64, h as i64 * art.unit);
-        let mut t = Tank { art, w, h, rng, things: Vec::new(), bubbles: Vec::new(), weeds: Vec::new(), tick: 0, fish_level };
+        let mut t =
+            Tank { art, w, h, rng, things: Vec::new(), bubbles: Vec::new(), weeds: Vec::new(), tick: 0, fish_level };
         let n_weeds = (t.w / 7).max(2);
         // Not in front of the castle (bottom right).
         let castle_x = t.w - art_width(art.castle) - 3;
@@ -433,7 +418,16 @@ impl Tank {
             self.w as f64
         };
         let color = *self.rng.pick(FISH_COLORS);
-        self.things.push(Thing { kind: Kind::Fish, x, y, dx: if right { speed } else { -speed }, dy: 0.0, art: lines, color, age: 0 });
+        self.things.push(Thing {
+            kind: Kind::Fish,
+            x,
+            y,
+            dx: if right { speed } else { -speed },
+            dy: 0.0,
+            art: lines,
+            color,
+            age: 0,
+        });
     }
 
     fn add_visitor(&mut self) {
@@ -446,13 +440,26 @@ impl Tank {
         let a = self.art;
         let u = a.unit;
         let (kind, art, color, y, speed): (Kind, &[&str], Rgb, f64, f64) = match which {
-            0 => (Kind::Shark, a.shark, Rgb(150, 160, 180), self.rng.range(a.surface + 2 * u, (self.h - 8 * u).max(a.surface + 3 * u)) as f64, 1.1),
+            0 => (
+                Kind::Shark,
+                a.shark,
+                Rgb(150, 160, 180),
+                self.rng.range(a.surface + 2 * u, (self.h - 8 * u).max(a.surface + 3 * u)) as f64,
+                1.1,
+            ),
             // Whale: its back above the waves; ship: its hull in the water.
             1 => (Kind::Whale, a.whale, Rgb(90, 120, 200), (a.sky - if a.pixels { 5 } else { 1 }) as f64, 0.45),
-            2 => (Kind::Ship, a.ship, Rgb(210, 170, 110), (a.sky - a.ship.len() as i64 + if a.pixels { 3 } else { 1 }) as f64, 0.5),
+            2 => (
+                Kind::Ship,
+                a.ship,
+                Rgb(210, 170, 110),
+                (a.sky - a.ship.len() as i64 + if a.pixels { 3 } else { 1 }) as f64,
+                0.5,
+            ),
             _ => (Kind::Jelly, a.jelly[0], Rgb(240, 130, 210), (self.h - 6 * u) as f64, 0.15 * u as f64),
         };
-        let lines: Vec<String> = if right || kind == Kind::Jelly { art.iter().map(|s| s.to_string()).collect() } else { a.flip(art) };
+        let lines: Vec<String> =
+            if right || kind == Kind::Jelly { art.iter().map(|s| s.to_string()).collect() } else { a.flip(art) };
         let w = lines.iter().map(|l| l.chars().count()).max().unwrap_or(1) as f64;
         let (x, dx, dy) = if kind == Kind::Jelly {
             (self.rng.range(2, (self.w - 12).max(3)) as f64, 0.0, -speed)
@@ -504,7 +511,9 @@ impl Tank {
         self.things.retain(|t| {
             let (top, bottom) = (t.y, t.y + t.art.len() as f64 - 1.0);
             t.kind != Kind::Fish
-                || !sharks.iter().any(|&(mx, my)| my >= top - 0.5 * u && my <= bottom + 0.5 * u && mx >= t.x - 1.0 && mx <= t.x + t.width() as f64)
+                || !sharks.iter().any(|&(mx, my)| {
+                    my >= top - 0.5 * u && my <= bottom + 0.5 * u && mx >= t.x - 1.0 && mx <= t.x + t.width() as f64
+                })
         });
         let fish = self.things.iter().filter(|t| t.kind == Kind::Fish).count();
         if fish < self.target_fish() && self.rng.chance(0.08 * factor) {
@@ -557,7 +566,9 @@ impl Tank {
             for y in top..h {
                 let d = ((y - a.sky) as f64 / (h - a.sky) as f64).max(0.0);
                 let mut col = mix(Rgb(45, 130, 200), Rgb(6, 30, 75), d.powf(0.8));
-                let ray = ((xf * 0.09 + y as f64 * 0.045 - t * 0.02).sin() * (xf * 0.031 - y as f64 * 0.02 + t * 0.011).sin()).max(0.0);
+                let ray = ((xf * 0.09 + y as f64 * 0.045 - t * 0.02).sin()
+                    * (xf * 0.031 - y as f64 * 0.02 + t * 0.011).sin())
+                .max(0.0);
                 col = mix(col, Rgb(150, 215, 255), ray.powi(3) * 0.35 * (1.0 - d));
                 if y <= top + 1 {
                     col = mix(col, Rgb(200, 235, 255), if y == top { 0.6 } else { 0.25 });
@@ -595,7 +606,11 @@ impl Tank {
                 let col = mix(Rgb(20, 105, 45), Rgb(90, 200, 100), f);
                 p.put(xx, bottom - j, col);
                 if j % 4 == 2 {
-                    p.put(xx + if (j / 4 + k as i64) % 2 == 0 { 1 } else { -1 }, bottom - j, mix(col, Rgb(140, 230, 120), 0.3));
+                    p.put(
+                        xx + if (j / 4 + k as i64) % 2 == 0 { 1 } else { -1 },
+                        bottom - j,
+                        mix(col, Rgb(140, 230, 120), 0.3),
+                    );
                 }
             }
         }
@@ -628,9 +643,15 @@ impl Tank {
         for row in 0..(a.sky / 2 - 1) {
             for x in 0..w {
                 let n = hash(x, row * 1000);
-                if n % 41 == 0 && (moon.0 - x as f64).abs() > 5.0 {
-                    let twinkle = (n / 41 + self.tick / 10) % 7 == 0;
-                    let ch = if n % 3 == 0 { '✦' } else if twinkle { '∙' } else { '·' };
+                if n.is_multiple_of(41) && (moon.0 - x as f64).abs() > 5.0 {
+                    let twinkle = (n / 41 + self.tick / 10).is_multiple_of(7);
+                    let ch = if n.is_multiple_of(3) {
+                        '✦'
+                    } else if twinkle {
+                        '∙'
+                    } else {
+                        '·'
+                    };
                     p.glyph(c, x, row, ch, Rgb(235, 235, 200));
                 }
             }
@@ -705,7 +726,13 @@ impl Tank {
             }
         }
         for b in &self.bubbles {
-            let ch = if b.y < (SURFACE + 3) as f64 { 'O' } else if b.y < self.h as f64 / 2.0 { 'o' } else { '.' };
+            let ch = if b.y < (SURFACE + 3) as f64 {
+                'O'
+            } else if b.y < self.h as f64 / 2.0 {
+                'o'
+            } else {
+                '.'
+            };
             c.set(b.x, b.y as i64, ch, Some(WATER_LIGHT), false);
         }
     }

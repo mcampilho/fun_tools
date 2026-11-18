@@ -52,10 +52,7 @@ pub fn parse_flf(text: &str) -> Option<FlfFont> {
         return None;
     }
     let hardblank = header[5..].chars().next()?;
-    let nums: Vec<i64> = header[5 + hardblank.len_utf8()..]
-        .split_whitespace()
-        .map_while(|n| n.parse().ok())
-        .collect();
+    let nums: Vec<i64> = header[5 + hardblank.len_utf8()..].split_whitespace().map_while(|n| n.parse().ok()).collect();
     let height = *nums.first()? as usize;
     let old = *nums.get(3).unwrap_or(&0);
     let comments = *nums.get(4).unwrap_or(&0) as usize;
@@ -421,16 +418,47 @@ pub const FILTERS: &[&str] = &["crop", "rainbow", "gay", "metal", "fire", "flip"
 
 fn mirror(c: char, horizontal: bool) -> char {
     const H: &[(char, char)] = &[
-        ('/', '\\'), ('(', ')'), ('[', ']'), ('{', '}'), ('<', '>'), ('▌', '▐'), ('▛', '▜'), ('▙', '▟'),
-        ('d', 'b'), ('p', 'q'), ('`', '\''), ('┌', '┐'), ('└', '┘'), ('╭', '╮'), ('╰', '╯'),
+        ('/', '\\'),
+        ('(', ')'),
+        ('[', ']'),
+        ('{', '}'),
+        ('<', '>'),
+        ('▌', '▐'),
+        ('▛', '▜'),
+        ('▙', '▟'),
+        ('d', 'b'),
+        ('p', 'q'),
+        ('`', '\''),
+        ('┌', '┐'),
+        ('└', '┘'),
+        ('╭', '╮'),
+        ('╰', '╯'),
     ];
     const V: &[(char, char)] = &[
-        ('/', '\\'), ('▀', '▄'), ('^', 'v'), ('_', '‾'), ('▛', '▙'), ('▜', '▟'), ('┌', '└'), ('┐', '┘'),
-        ('╭', '╰'), ('╮', '╯'), ('\'', ','), ('M', 'W'),
+        ('/', '\\'),
+        ('▀', '▄'),
+        ('^', 'v'),
+        ('_', '‾'),
+        ('▛', '▙'),
+        ('▜', '▟'),
+        ('┌', '└'),
+        ('┐', '┘'),
+        ('╭', '╰'),
+        ('╮', '╯'),
+        ('\'', ','),
+        ('M', 'W'),
     ];
     let map = if horizontal { H } else { V };
     map.iter()
-        .find_map(|&(a, b)| if c == a { Some(b) } else if c == b { Some(a) } else { None })
+        .find_map(|&(a, b)| {
+            if c == a {
+                Some(b)
+            } else if c == b {
+                Some(a)
+            } else {
+                None
+            }
+        })
         .unwrap_or(c)
 }
 
@@ -704,7 +732,8 @@ pub fn run(toilet: bool) {
     let mut cli = Cli::new(if toilet { "rtoilet" } else { "rfiglet" });
     let t = Lang::pick(cli.lang, &EN, &PT, &ES);
     let (mut font_name, mut dirs, mut width_opt) = (None::<String>, Vec::<PathBuf>::new(), None::<usize>);
-    let (mut align, mut mode, mut filters, mut force, mut list) = (None::<Align>, None::<Mode>, Vec::<String>::new(), false, false);
+    let (mut align, mut mode, mut filters, mut force, mut list) =
+        (None::<Align>, None::<Mode>, Vec::<String>::new(), false, false);
     let mut words = Vec::new();
     while let Some(a) = cli.next() {
         match a {
@@ -753,7 +782,11 @@ pub fn run(toilet: bool) {
     let align = align.unwrap_or(if matches!(&font, Font::Flf(f) if f.rtl) { Align::Right } else { Align::Left });
     let max = width_opt.unwrap_or_else(|| {
         use std::io::IsTerminal;
-        if std::io::stdout().is_terminal() { term::size().0 } else { 80 }
+        if std::io::stdout().is_terminal() {
+            term::size().0
+        } else {
+            80
+        }
     });
     // As figlet: the last column stays free (a full line would wrap in the terminal).
     let max = max.saturating_sub(1).max(1);

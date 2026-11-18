@@ -133,14 +133,8 @@ fn color(ch: char) -> Option<Rgb> {
 
 const SPACE: Rgb = Rgb(16, 38, 88);
 const STAR: Rgb = Rgb(255, 255, 255);
-const RAINBOW: [Rgb; 6] = [
-    Rgb(255, 45, 45),
-    Rgb(255, 155, 0),
-    Rgb(255, 235, 0),
-    Rgb(60, 225, 20),
-    Rgb(10, 155, 255),
-    Rgb(115, 65, 255),
-];
+const RAINBOW: [Rgb; 6] =
+    [Rgb(255, 45, 45), Rgb(255, 155, 0), Rgb(255, 235, 0), Rgb(60, 225, 20), Rgb(10, 155, 255), Rgb(115, 65, 255)];
 
 /// Frames in one cycle of the animation.
 const CYCLE: usize = 6;
@@ -164,7 +158,8 @@ impl Scene {
         let mut s = Scene { w, h, stars: Vec::new(), rng };
         let n = (w * h / 160).max(4);
         for _ in 0..n {
-            let star = Star { x: s.rng.range(0, w.max(1)) as f64, y: s.rng.range(0, h.max(1)), phase: s.rng.below(CYCLE) };
+            let star =
+                Star { x: s.rng.range(0, w.max(1)) as f64, y: s.rng.range(0, h.max(1)), phase: s.rng.below(CYCLE) };
             s.stars.push(star);
         }
         s

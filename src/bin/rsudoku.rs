@@ -47,7 +47,17 @@ Keys: arrows or h j k l move, 1-9 write, 0 space or Backspace erase, c check,
     time: "Time",
     level: "Level",
     hints: "Hints",
-    keys: &["arrows  move", "1-9     write", "0       erase", "c       check", "?       hint", "u       undo", "n       new", "S       solve", "q       quit"],
+    keys: &[
+        "arrows  move",
+        "1-9     write",
+        "0       erase",
+        "c       check",
+        "?       hint",
+        "u       undo",
+        "n       new",
+        "S       solve",
+        "q       quit",
+    ],
     solved: "Solved! n for a new puzzle",
     shown: "That is the solution: n for a new puzzle",
     wrong: "Wrong digits in red",
@@ -80,7 +90,17 @@ c verificar, ? ajuda, u desfazer, n novo puzzle, S mostrar a solução, q ou Esc
     time: "Tempo",
     level: "Nível",
     hints: "Ajudas",
-    keys: &["setas   mover", "1-9     escrever", "0       apagar", "c       verificar", "?       ajuda", "u       desfazer", "n       novo", "S       solução", "q       sair"],
+    keys: &[
+        "setas   mover",
+        "1-9     escrever",
+        "0       apagar",
+        "c       verificar",
+        "?       ajuda",
+        "u       desfazer",
+        "n       novo",
+        "S       solução",
+        "q       sair",
+    ],
     solved: "Resolvido! n para um novo puzzle",
     shown: "É esta a solução: n para um novo puzzle",
     wrong: "Algarismos errados a vermelho",
@@ -113,7 +133,17 @@ c comprobar, ? pista, u deshacer, n puzle nuevo, S mostrar la solución, q o Esc
     time: "Tiempo",
     level: "Nivel",
     hints: "Pistas",
-    keys: &["flechas mover", "1-9     escribir", "0       borrar", "c       comprobar", "?       pista", "u       deshacer", "n       nuevo", "S       solución", "q       salir"],
+    keys: &[
+        "flechas mover",
+        "1-9     escribir",
+        "0       borrar",
+        "c       comprobar",
+        "?       pista",
+        "u       deshacer",
+        "n       nuevo",
+        "S       solución",
+        "q       salir",
+    ],
     solved: "¡Resuelto! n para un puzle nuevo",
     shown: "Esta es la solución: n para un puzle nuevo",
     wrong: "Dígitos erróneos en rojo",
@@ -137,9 +167,9 @@ fn box_of(i: usize) -> usize {
 fn options(g: &Grid, i: usize) -> u16 {
     let (r, c, b) = (i / 9, i % 9, box_of(i));
     let mut used = 0u16;
-    for j in 0..81 {
-        if g[j] != 0 && (j / 9 == r || j % 9 == c || box_of(j) == b) {
-            used |= 1 << g[j];
+    for (j, &d) in g.iter().enumerate() {
+        if d != 0 && (j / 9 == r || j % 9 == c || box_of(j) == b) {
+            used |= 1 << d;
         }
     }
     !used & 0b11_1111_1110
@@ -215,7 +245,11 @@ fn to_text(g: &Grid) -> String {
     let mut s = String::new();
     for r in 0..9 {
         if r % 3 == 0 {
-            s.push_str(if r == 0 { "┏━━━━━━━┳━━━━━━━┳━━━━━━━┓\n" } else { "┣━━━━━━━╋━━━━━━━╋━━━━━━━┫\n" });
+            s.push_str(if r == 0 {
+                "┏━━━━━━━┳━━━━━━━┳━━━━━━━┓\n"
+            } else {
+                "┣━━━━━━━╋━━━━━━━╋━━━━━━━┫\n"
+            });
         }
         for c in 0..9 {
             if c % 3 == 0 {
@@ -248,7 +282,19 @@ struct Game {
 impl Game {
     fn new(level: usize, rng: &mut Rng) -> Game {
         let (puzzle, solution) = make(level, rng);
-        Game { puzzle, solution, board: puzzle, cursor: 40, undo: Vec::new(), level, start: Instant::now(), end: None, checked: false, revealed: false, hints: 0 }
+        Game {
+            puzzle,
+            solution,
+            board: puzzle,
+            cursor: 40,
+            undo: Vec::new(),
+            level,
+            start: Instant::now(),
+            end: None,
+            checked: false,
+            revealed: false,
+            hints: 0,
+        }
     }
 
     fn done(&self) -> bool {
@@ -270,7 +316,9 @@ impl Game {
 
     fn conflict(&self, i: usize) -> bool {
         let d = self.board[i];
-        d != 0 && (0..81).any(|j| j != i && self.board[j] == d && (j / 9 == i / 9 || j % 9 == i % 9 || box_of(j) == box_of(i)))
+        d != 0
+            && (0..81)
+                .any(|j| j != i && self.board[j] == d && (j / 9 == i / 9 || j % 9 == i % 9 || box_of(j) == box_of(i)))
     }
 
     fn handle(&mut self, input: Input) {
@@ -296,12 +344,10 @@ impl Game {
                     self.cursor = i;
                 }
             }
-            Input::Key('S') => {
-                if !self.done() {
-                    self.board = self.solution;
-                    self.revealed = true;
-                    self.end = Some(self.start.elapsed());
-                }
+            Input::Key('S') if !self.done() => {
+                self.board = self.solution;
+                self.revealed = true;
+                self.end = Some(self.start.elapsed());
             }
             _ => {}
         }
@@ -331,10 +377,34 @@ impl Game {
                             (false, true, true, false) => '┓',
                             (true, false, false, true) => '┗',
                             (true, false, true, false) => '┛',
-                            (false, true, true, true) => if vh { '┳' } else { '┯' },
-                            (true, false, true, true) => if vh { '┻' } else { '┷' },
-                            (true, true, false, true) => if hh { '┣' } else { '┠' },
-                            (true, true, true, false) => if hh { '┫' } else { '┨' },
+                            (false, true, true, true) => {
+                                if vh {
+                                    '┳'
+                                } else {
+                                    '┯'
+                                }
+                            }
+                            (true, false, true, true) => {
+                                if vh {
+                                    '┻'
+                                } else {
+                                    '┷'
+                                }
+                            }
+                            (true, true, false, true) => {
+                                if hh {
+                                    '┣'
+                                } else {
+                                    '┠'
+                                }
+                            }
+                            (true, true, true, false) => {
+                                if hh {
+                                    '┫'
+                                } else {
+                                    '┨'
+                                }
+                            }
                             _ => match (vh, hh) {
                                 (true, true) => '╋',
                                 (true, false) => '╂',
@@ -343,8 +413,20 @@ impl Game {
                             },
                         }
                     }
-                    (true, false) => if vh { '┃' } else { '│' },
-                    (false, true) => if hh { '━' } else { '─' },
+                    (true, false) => {
+                        if vh {
+                            '┃'
+                        } else {
+                            '│'
+                        }
+                    }
+                    (false, true) => {
+                        if hh {
+                            '━'
+                        } else {
+                            '─'
+                        }
+                    }
                     _ => ' ',
                 };
                 s.push(ch);
@@ -431,7 +513,10 @@ fn main() {
                 "-V" | "--version" => cli.version(),
                 "-d" | "--difficulty" => {
                     let v = cli.value(&opt).to_ascii_lowercase();
-                    level = LEVEL_NAMES.iter().position(|n| *n == v).unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
+                    level = LEVEL_NAMES
+                        .iter()
+                        .position(|n| *n == v)
+                        .unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
                 }
                 "-s" | "--seed" => seed = Some(cli.parse(&opt)),
                 "-p" | "--print" => print = Some(cli.number(&opt, 1..=100)),
@@ -492,20 +577,24 @@ mod tests {
     use super::*;
 
     fn valid(g: &Grid) -> bool {
-        (0..81).all(|i| g[i] != 0 && (0..81).all(|j| j == i || g[j] != g[i] || (j / 9 != i / 9 && j % 9 != i % 9 && box_of(j) != box_of(i))))
+        (0..81).all(|i| {
+            g[i] != 0
+                && (0..81)
+                    .all(|j| j == i || g[j] != g[i] || (j / 9 != i / 9 && j % 9 != i % 9 && box_of(j) != box_of(i)))
+        })
     }
 
     #[test]
     fn puzzles_have_one_solution() {
         let mut rng = Rng::seeded(7);
-        for level in 0..4 {
+        for (level, &target) in CLUES.iter().enumerate().take(4) {
             let (p, s) = make(level, &mut rng);
             assert!(valid(&s));
             assert!((0..81).all(|i| p[i] == 0 || p[i] == s[i]));
             let mut test = p;
             assert_eq!(solve(&mut test, 2, None, false), 1);
             let clues = p.iter().filter(|&&d| d != 0).count();
-            assert!(clues <= CLUES[level] + 6, "level {level}: {clues}");
+            assert!(clues <= target + 6, "level {level}: {clues}");
         }
     }
 

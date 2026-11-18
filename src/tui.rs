@@ -18,7 +18,12 @@ impl Screen {
         }));
         terminal::enable_raw_mode()?;
         let screen = Screen; // from here on, Drop restores the terminal
-        execute!(io::stdout(), terminal::EnterAlternateScreen, cursor::Hide, terminal::Clear(terminal::ClearType::All))?;
+        execute!(
+            io::stdout(),
+            terminal::EnterAlternateScreen,
+            cursor::Hide,
+            terminal::Clear(terminal::ClearType::All)
+        )?;
         Ok(screen)
     }
 }

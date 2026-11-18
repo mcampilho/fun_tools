@@ -108,6 +108,8 @@ Options:
     w_unknown: "Unknown",
 };
 
+// Every text is translated today; one added later falls back to English (`..EN`).
+#[allow(clippy::needless_update)]
 const PT: Texts = Texts {
     os: "SO",
     kernel: "Kernel",
@@ -161,6 +163,7 @@ Opções:
     ..EN
 };
 
+#[allow(clippy::needless_update)]
 const ES: Texts = Texts {
     os: "SO",
     kernel: "Kernel",
@@ -224,10 +227,7 @@ pub fn texts(lang: Lang) -> &'static Texts {
 
 /// Maps a code or locale such as "pt", "pt-PT" or "es_ES.UTF-8" to a language.
 pub fn parse(code: &str) -> Option<Lang> {
-    let prefix = code
-        .split(|c| c == '-' || c == '_' || c == '.' || c == '@')
-        .next()?
-        .to_ascii_lowercase();
+    let prefix = code.split(['-', '_', '.', '@']).next()?.to_ascii_lowercase();
     LANGS.iter().find(|(c, _)| *c == prefix).map(|(_, l)| *l)
 }
 

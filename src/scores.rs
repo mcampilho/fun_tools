@@ -53,7 +53,7 @@ pub fn parse(text: &str) -> Vec<Entry> {
             Some(Entry { score, name: f.next().unwrap_or("").to_string(), date: f.next().unwrap_or("").to_string() })
         })
         .collect();
-    v.sort_by(|a, b| b.score.cmp(&a.score));
+    v.sort_by_key(|e| std::cmp::Reverse(e.score));
     v.truncate(KEEP);
     v
 }

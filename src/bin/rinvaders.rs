@@ -133,7 +133,8 @@ fn row_kinds(rows: usize) -> &'static [usize] {
     }
 }
 
-const SAUCER: &[&str] = &[".....AAAAA.....", "...AAAAAAAAA...", ".AAYAAYAAYAAYA.", "AAAAAAAAAAAAAAA", "..AA.......AA.."];
+const SAUCER: &[&str] =
+    &[".....AAAAA.....", "...AAAAAAAAA...", ".AAYAAYAAYAAYA.", "AAAAAAAAAAAAAAA", "..AA.......AA.."];
 const SHIP: &[&str] = &[".....W.....", "....AWA....", "...AAAAA...", ".AAAAAAAAA.", "AAAAAAAAAAA", "AA.......AA"];
 const BOOM: &[&str] = &["A..A.A..A", ".A.....A.", "..A.A.A..", "AA.....AA", "..A.A.A..", ".A.....A.", "A..A.A..A"];
 const SHIELD: &[&str] = &[
@@ -159,7 +160,10 @@ fn color(base: Rgb) -> impl Fn(char) -> Option<Rgb> {
 
 fn hits(art: &[&str], ax: i64, ay: i64, x: i64, y: i64) -> bool {
     let (i, j) = (x - ax, y - ay);
-    j >= 0 && (j as usize) < art.len() && i >= 0 && art[j as usize].as_bytes().get(i as usize).is_some_and(|&b| b != b'.')
+    j >= 0
+        && (j as usize) < art.len()
+        && i >= 0
+        && art[j as usize].as_bytes().get(i as usize).is_some_and(|&b| b != b'.')
 }
 
 struct Shot {
@@ -204,9 +208,32 @@ impl Game {
         let (w, h) = (w as i64, rows as i64 * 2);
         let cols = ((w - 20) / GAP_X).clamp(5, 11) as usize;
         let mut g = Game {
-            w, h, rng, alive: Vec::new(), cols, kinds: row_kinds(((h - 28) / GAP_Y).max(2) as usize), fx: 0, fy: 0, dir: 1, frame: 0, next_step: 0, ship: w / 2 - 5, shot: None,
-            bombs: Vec::new(), shields: Vec::new(), shield_y: h - 18, saucer: None, booms: Vec::new(), score: 0, lives: 3,
-            level, dead_for: 0, over: false, tick: 0, banner: 40, extra_given: false,
+            w,
+            h,
+            rng,
+            alive: Vec::new(),
+            cols,
+            kinds: row_kinds(((h - 28) / GAP_Y).max(2) as usize),
+            fx: 0,
+            fy: 0,
+            dir: 1,
+            frame: 0,
+            next_step: 0,
+            ship: w / 2 - 5,
+            shot: None,
+            bombs: Vec::new(),
+            shields: Vec::new(),
+            shield_y: h - 18,
+            saucer: None,
+            booms: Vec::new(),
+            score: 0,
+            lives: 3,
+            level,
+            dead_for: 0,
+            over: false,
+            tick: 0,
+            banner: 40,
+            extra_given: false,
         };
         g.start_level();
         g
@@ -445,8 +472,13 @@ impl Game {
             }
         }
         if let Some((x, y)) = self.saucer {
-            let lights = if self.tick / 4 % 2 == 0 { Rgb(255, 230, 90) } else { Rgb(255, 120, 60) };
-            p.sprite(x as i64, y as i64, SAUCER, |ch| if ch == 'Y' { Some(lights) } else { color(Rgb(230, 70, 80))(ch) });
+            let lights = if (self.tick / 4).is_multiple_of(2) { Rgb(255, 230, 90) } else { Rgb(255, 120, 60) };
+            p.sprite(
+                x as i64,
+                y as i64,
+                SAUCER,
+                |ch| if ch == 'Y' { Some(lights) } else { color(Rgb(230, 70, 80))(ch) },
+            );
         }
         let ship_y = self.h - 8;
         if self.dead_for == 0 && !self.over {
@@ -475,7 +507,14 @@ impl Game {
         // The scores on the top row.
         let top = format!(
             "{} {:<7} {} {:<7} {} {}  {} {}",
-            t.score, self.score, t.best, best.max(self.score), t.lives, "♥".repeat(self.lives as usize), t.level, self.level
+            t.score,
+            self.score,
+            t.best,
+            best.max(self.score),
+            t.lives,
+            "♥".repeat(self.lives as usize),
+            t.level,
+            self.level
         );
         c.text(1, 0, &top, Some(Rgb(230, 230, 230)), false);
         let rows = self.h / 2;
@@ -483,8 +522,6 @@ impl Game {
             Some((t.over, Rgb(240, 90, 90)))
         } else if paused {
             Some((t.paused, Rgb(240, 210, 80)))
-        } else if self.banner > 0 {
-            None
         } else {
             None
         };
@@ -622,7 +659,17 @@ mod tests {
             g.fire();
             g.step();
         }
-        assert!(g.score > 0, "score {} lives {} left {} over {} ship {} fx {} fy {}", g.score, g.lives, g.left(), g.over, g.ship, g.fx, g.fy);
+        assert!(
+            g.score > 0,
+            "score {} lives {} left {} over {} ship {} fx {} fy {}",
+            g.score,
+            g.lives,
+            g.left(),
+            g.over,
+            g.ship,
+            g.fx,
+            g.fy
+        );
         let mut c = Canvas::new(80, 24);
         let mut p = Pixels::new(80, 24);
         g.draw(&mut c, &mut p, &EN, 0, false);

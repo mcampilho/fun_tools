@@ -5,9 +5,7 @@ pub struct Rng(u64);
 
 impl Rng {
     pub fn new() -> Rng {
-        let t = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map_or(0, |d| d.as_nanos() as u64);
+        let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_nanos() as u64);
         Rng::seeded(t ^ (u64::from(std::process::id()) << 32))
     }
 
@@ -35,7 +33,11 @@ impl Rng {
     }
 
     pub fn below(&mut self, n: usize) -> usize {
-        if n == 0 { 0 } else { (self.next_u64() % n as u64) as usize }
+        if n == 0 {
+            0
+        } else {
+            (self.next_u64() % n as u64) as usize
+        }
     }
 
     /// A number in 0.0..1.0.

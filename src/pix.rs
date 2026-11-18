@@ -124,7 +124,9 @@ impl Pixels {
                     (Some(t), None) => format!("{}▀{}", term::fg(depth, t), term::RESET),
                     (None, Some(b)) => format!("{}▄{}", term::fg(depth, b), term::RESET),
                     (Some(t), Some(b)) if t == b => format!("{} {}", term::color(depth, t, true), term::RESET),
-                    (Some(t), Some(b)) => format!("{}{}▀{}", term::fg(depth, t), term::color(depth, b, true), term::RESET),
+                    (Some(t), Some(b)) => {
+                        format!("{}{}▀{}", term::fg(depth, t), term::color(depth, b, true), term::RESET)
+                    }
                 };
                 s.push_str(&cell);
             }

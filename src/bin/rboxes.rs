@@ -261,16 +261,13 @@ fn main() {
         .iter()
         .find(|s| s.name == name)
         .unwrap_or_else(|| cli.fail(&format!("{} '{name}' (--list)", t.unknown_style)));
-    let rgb = match color.as_deref() {
-        None => None,
-        Some(c) => Some(
-            COLORS
-                .iter()
-                .find(|(n, _)| *n == c)
-                .map(|(_, v)| *v)
-                .unwrap_or_else(|| cli.fail(&format!("{} '{c}'", t.unknown_color))),
-        ),
-    };
+    let rgb = color.as_deref().map(|c| {
+        COLORS
+            .iter()
+            .find(|(n, _)| *n == c)
+            .map(|(_, v)| *v)
+            .unwrap_or_else(|| cli.fail(&format!("{} '{c}'", t.unknown_color)))
+    });
     let rainbow = color.as_deref() == Some("rainbow");
     let depth = if rgb.is_some() { term::depth(force.then_some(true)) } else { Depth::None };
 

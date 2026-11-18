@@ -89,22 +89,11 @@ const CAR: &[&str] = &[
     "   (%)          (%)   ",
 ];
 
-const LITTLE_LOCO: &[&str] = &[
-    "   _   __________ ",
-    "  | |_|   [ ]    |",
-    " <  ___________ _|",
-    "  \\_____________|_",
-    "   (%) (%)  (%)   ",
-];
+const LITTLE_LOCO: &[&str] =
+    &["   _   __________ ", "  | |_|   [ ]    |", " <  ___________ _|", "  \\_____________|_", "   (%) (%)  (%)   "];
 const LITTLE_CHIMNEY: i64 = 3;
 
-const LITTLE_CAR: &[&str] = &[
-    "            ",
-    " _________  ",
-    "| [ ] [ ] | ",
-    "|_________|=",
-    "  (%) (%)   ",
-];
+const LITTLE_CAR: &[&str] = &["            ", " _________  ", "| [ ] [ ] | ", "|_________|=", "  (%) (%)   "];
 
 // The Unicode look: pixel art (see `pix::palette`), facing left like the ASCII
 // train. The wheels, rods and smoke are drawn on top by the program.
@@ -190,7 +179,8 @@ const LOCO_V: Vehicle = Vehicle {
     wheels: &[(6.0, 16.0, 2.0), (14.5, 14.5, 3.5), (22.5, 14.5, 3.5), (30.5, 14.5, 3.5), (39.0, 16.0, 2.0)],
     rod: true,
 };
-const TENDER_V: Vehicle = Vehicle { body: TENDER_PX, top: 3, wheels: &[(4.0, 16.0, 2.0), (11.0, 16.0, 2.0)], rod: false };
+const TENDER_V: Vehicle =
+    Vehicle { body: TENDER_PX, top: 3, wheels: &[(4.0, 16.0, 2.0), (11.0, 16.0, 2.0)], rod: false };
 const CAR_V: Vehicle = Vehicle {
     body: CAR_PX,
     top: 1,
@@ -203,7 +193,8 @@ const LITTLE_LOCO_V: Vehicle = Vehicle {
     wheels: &[(3.5, 10.5, 1.5), (9.5, 9.5, 2.5), (15.5, 9.5, 2.5), (22.0, 10.5, 1.5)],
     rod: true,
 };
-const LITTLE_CAR_V: Vehicle = Vehicle { body: LITTLE_CAR_PX, top: 1, wheels: &[(4.0, 10.5, 1.5), (12.0, 10.5, 1.5)], rod: false };
+const LITTLE_CAR_V: Vehicle =
+    Vehicle { body: LITTLE_CAR_PX, top: 1, wheels: &[(4.0, 10.5, 1.5), (12.0, 10.5, 1.5)], rod: false };
 
 const CAR_COLORS: &[Rgb] = &[Rgb(45, 110, 185), Rgb(40, 125, 75), Rgb(150, 50, 60)];
 
@@ -223,7 +214,8 @@ struct Puff {
 
 /// Rows of the whole train (locomotive + carriages) and the colour of each column.
 fn build(little: bool, cars: usize) -> (Vec<String>, Vec<Rgb>, i64) {
-    let (loco, car, chimney) = if little { (LITTLE_LOCO, LITTLE_CAR, LITTLE_CHIMNEY) } else { (LOCO, CAR, LOCO_CHIMNEY) };
+    let (loco, car, chimney) =
+        if little { (LITTLE_LOCO, LITTLE_CAR, LITTLE_CHIMNEY) } else { (LOCO, CAR, LOCO_CHIMNEY) };
     let mut rows: Vec<String> = loco.iter().map(|s| s.to_string()).collect();
     let mut colors = vec![LOCO_COLOR; loco[0].chars().count()];
     for _ in 0..cars {
@@ -354,7 +346,13 @@ struct PxScene {
 
 impl PxScene {
     fn new(little: bool, fly: bool, cars: usize) -> PxScene {
-        PxScene { train: build_px(little, cars), rail_h: if little { LITTLE_RAIL_PX } else { RAIL_PX }, little, fly, puffs: Vec::new() }
+        PxScene {
+            train: build_px(little, cars),
+            rail_h: if little { LITTLE_RAIL_PX } else { RAIL_PX },
+            little,
+            fly,
+            puffs: Vec::new(),
+        }
     }
 
     fn width(&self) -> i64 {
@@ -375,7 +373,7 @@ impl PxScene {
         scenery(p, rail, tick);
         // Smoke from the chimney: puffs that grow, drift back and fade into the sky.
         let chimney = if self.little { 3 } else { 6 };
-        if tick % 3 == 0 {
+        if tick.is_multiple_of(3) {
             self.puffs.push(PxPuff { x: (x + chimney) as f64 + 0.5, y: (y - 1) as f64, age: 0.0 });
         }
         for pf in &mut self.puffs {
@@ -407,7 +405,8 @@ impl PxScene {
                 let steel = Rgb(205, 205, 215);
                 p.line(first.0, first.1, last.0, last.1, steel);
                 // Piston rod into the cylinder at the front.
-                let cyl = (vx as f64 + if self.little { 2.0 } else { 6.0 }, vy as f64 + if self.little { 7.5 } else { 13.0 });
+                let cyl =
+                    (vx as f64 + if self.little { 2.0 } else { 6.0 }, vy as f64 + if self.little { 7.5 } else { 13.0 });
                 p.line(cyl.0, cyl.1, first.0, first.1, steel);
             }
         }
@@ -474,7 +473,7 @@ fn run(little: bool, fly: bool, cars: usize, speed: u32, depth: Depth) -> std::i
 
         canvas.clear();
         // Smoke first, so the train passes in front of it.
-        if tick % 3 == 0 {
+        if tick.is_multiple_of(3) {
             puffs.push(Puff { x: (x + chimney) as f64, y: (y - 1) as f64, age: 0 });
         }
         for p in &mut puffs {

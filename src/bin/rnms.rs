@@ -122,7 +122,11 @@ impl Secret {
                     .map(|c| {
                         // Wide characters (CJK, emoji) stay as they are: a narrow mask would move the rest.
                         let masked = (spaces || !c.is_whitespace()) && width(&c.to_string()) == 1;
-                        Glyph { real: c, shown: if masked { *rng.pick(&pool) } else { c }, reveal: if masked { rng.float().powf(0.7) * 4.0 } else { 0.0 } }
+                        Glyph {
+                            real: c,
+                            shown: if masked { *rng.pick(&pool) } else { c },
+                            reveal: if masked { rng.float().powf(0.7) * 4.0 } else { 0.0 },
+                        }
                     })
                     .collect()
             })
@@ -187,7 +191,8 @@ impl Drop for Raw {
 fn main() {
     let mut cli = Cli::new("rnms");
     let t = Lang::pick(cli.lang, &EN, &PT, &ES);
-    let (mut auto, mut spaces, mut color, mut clear, mut time, mut unicode) = (false, false, NAMED[4].1, false, 2.0f64, false);
+    let (mut auto, mut spaces, mut color, mut clear, mut time, mut unicode) =
+        (false, false, NAMED[4].1, false, 2.0f64, false);
     let mut words = Vec::new();
     while let Some(a) = cli.next() {
         match a {
@@ -234,7 +239,16 @@ fn main() {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn run(text: &str, auto: bool, spaces: bool, unicode: bool, color: Rgb, clear: bool, time: f64, depth: Depth) -> std::io::Result<()> {
+fn run(
+    text: &str,
+    auto: bool,
+    spaces: bool,
+    unicode: bool,
+    color: Rgb,
+    clear: bool,
+    time: f64,
+    depth: Depth,
+) -> std::io::Result<()> {
     let (cols, rows) = term::size();
     // Lines wider than the terminal would wrap and break the redrawing: cut them,
     // and keep to one screen.

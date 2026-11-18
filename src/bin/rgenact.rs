@@ -91,10 +91,33 @@ const PARTS: &[&str] = &[
     "url", "web", "xml", "yaml", "zip", "atom", "glyph", "pixel", "shell", "stream", "task", "vector",
 ];
 const SUFFIXES: &[&str] = &["", "", "-core", "-derive", "-sys", "-utils", "-macros", "-rt", "-io", "-lite"];
-const DIRS: &[&str] = &["drivers/net", "drivers/gpu/drm", "fs/ext4", "kernel/sched", "mm", "net/ipv4", "sound/core", "crypto", "drivers/usb/core", "arch/x86/kernel", "block", "lib"];
+const DIRS: &[&str] = &[
+    "drivers/net",
+    "drivers/gpu/drm",
+    "fs/ext4",
+    "kernel/sched",
+    "mm",
+    "net/ipv4",
+    "sound/core",
+    "crypto",
+    "drivers/usb/core",
+    "arch/x86/kernel",
+    "block",
+    "lib",
+];
 const SERVICES: &[&str] = &[
-    "Journal Service", "Network Manager", "Load Kernel Modules", "Remount Root and Kernel File Systems", "Create Volatile Files and Directories",
-    "Login Service", "D-Bus System Message Bus", "Time Synchronization", "Disk Manager", "OpenSSH Daemon", "Update UTMP about System Boot", "Permit User Sessions",
+    "Journal Service",
+    "Network Manager",
+    "Load Kernel Modules",
+    "Remount Root and Kernel File Systems",
+    "Create Volatile Files and Directories",
+    "Login Service",
+    "D-Bus System Message Bus",
+    "Time Synchronization",
+    "Disk Manager",
+    "OpenSSH Daemon",
+    "Update UTMP about System Boot",
+    "Permit User Sessions",
 ];
 const KERNEL_MSGS: &[&str] = &[
     "usb {n}-{n}: new high-speed USB device number {n} using xhci_hcd",
@@ -112,15 +135,49 @@ const KERNEL_MSGS: &[&str] = &[
     "audit: initializing netlink subsys (disabled)",
     "thermal_sys: Registered thermal governor 'step_wise'",
 ];
-const PACKAGES: &[&str] = &["libssl3", "curl", "ca-certificates", "python3-pip", "build-essential", "git", "nginx", "zlib1g-dev", "libffi-dev", "tzdata"];
-const LOADING: &[&str] = &[
-    "Polishing the pixels", "Counting the semicolons", "Untangling the cables", "Warming up the hamsters",
-    "Aligning the bits", "Feeding the compiler", "Sorting the bytes by colour", "Asking the cache nicely",
-    "Folding the proteins of the database", "Calibrating the coffee machine", "Persuading the threads to cooperate",
-    "Dusting off the old backups", "Rounding up the stray pointers", "Teaching the AI to whistle",
+const PACKAGES: &[&str] = &[
+    "libssl3",
+    "curl",
+    "ca-certificates",
+    "python3-pip",
+    "build-essential",
+    "git",
+    "nginx",
+    "zlib1g-dev",
+    "libffi-dev",
+    "tzdata",
 ];
-const PATHS: &[&str] = &["/", "/index.html", "/api/v2/users", "/static/app.js", "/static/style.css", "/login", "/images/logo.png", "/api/v2/orders", "/health", "/feed.xml", "/search?q=rust"];
-const AGENTS: &[&str] = &["Mozilla/5.0 (X11; Linux x86_64)", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "curl/8.5.0", "ExampleBot/2.1"];
+const LOADING: &[&str] = &[
+    "Polishing the pixels",
+    "Counting the semicolons",
+    "Untangling the cables",
+    "Warming up the hamsters",
+    "Aligning the bits",
+    "Feeding the compiler",
+    "Sorting the bytes by colour",
+    "Asking the cache nicely",
+    "Folding the proteins of the database",
+    "Calibrating the coffee machine",
+    "Persuading the threads to cooperate",
+    "Dusting off the old backups",
+    "Rounding up the stray pointers",
+    "Teaching the AI to whistle",
+];
+const PATHS: &[&str] = &[
+    "/",
+    "/index.html",
+    "/api/v2/users",
+    "/static/app.js",
+    "/static/style.css",
+    "/login",
+    "/images/logo.png",
+    "/api/v2/orders",
+    "/health",
+    "/feed.xml",
+    "/search?q=rust",
+];
+const AGENTS: &[&str] =
+    &["Mozilla/5.0 (X11; Linux x86_64)", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "curl/8.5.0", "ExampleBot/2.1"];
 
 struct Ctx {
     rng: Rng,
@@ -145,11 +202,19 @@ impl Ctx {
     }
 
     fn c(&self, rgb: Rgb, s: &str) -> String {
-        if self.depth == Depth::None { s.to_string() } else { format!("{}{s}{}", term::fg(self.depth, rgb), term::RESET) }
+        if self.depth == Depth::None {
+            s.to_string()
+        } else {
+            format!("{}{s}{}", term::fg(self.depth, rgb), term::RESET)
+        }
     }
 
     fn bold(&self, rgb: Rgb, s: &str) -> String {
-        if self.depth == Depth::None { s.to_string() } else { format!("\x1b[1m{}{s}{}", term::fg(self.depth, rgb), term::RESET) }
+        if self.depth == Depth::None {
+            s.to_string()
+        } else {
+            format!("\x1b[1m{}{s}{}", term::fg(self.depth, rgb), term::RESET)
+        }
     }
 
     fn say(&mut self, s: &str) {
@@ -195,9 +260,20 @@ impl Ctx {
         for i in 0..=steps {
             let f = i as f64 / steps as f64;
             let fill = (f * width as f64) as usize;
-            let bar = format!("{}{}{}", "=".repeat(fill), if fill < width { ">" } else { "" }, " ".repeat(width - fill.min(width) - if fill < width { 1 } else { 0 }));
+            let bar = format!(
+                "{}{}{}",
+                "=".repeat(fill),
+                if fill < width { ">" } else { "" },
+                " ".repeat(width - fill.min(width) - if fill < width { 1 } else { 0 })
+            );
             let eta = ((1.0 - f) * total_ms as f64 / 1000.0).ceil() as u64;
-            let _ = write!(self.out, "\r{label:<28} [{}] {:>3}% {:>6.1} MB/s  ETA 0:{eta:02}", self.c(CYAN, &bar), (f * 100.0) as u32, rate);
+            let _ = write!(
+                self.out,
+                "\r{label:<28} [{}] {:>3}% {:>6.1} MB/s  ETA 0:{eta:02}",
+                self.c(CYAN, &bar),
+                (f * 100.0) as u32,
+                rate
+            );
             if !self.wait(total_ms / steps as u64) {
                 self.say("");
                 return false;
@@ -215,14 +291,50 @@ const MODULES: &[(&str, [&str; 3], Module)] = &[
     ("cargo", ["Rust crates being compiled", "Crates de Rust a compilar", "Crates de Rust compilándose"], cargo),
     ("bootlog", ["A Linux machine booting", "Uma máquina Linux a arrancar", "Una máquina Linux arrancando"], bootlog),
     ("kernel", ["A kernel being built", "Um kernel a ser compilado", "Un kernel compilándose"], kernel),
-    ("docker", ["A container image being built", "Uma imagem de contentor a ser construída", "Una imagen de contenedor construyéndose"], docker),
-    ("download", ["Big files being downloaded", "Ficheiros grandes a descarregar", "Archivos grandes descargándose"], download),
+    (
+        "docker",
+        [
+            "A container image being built",
+            "Uma imagem de contentor a ser construída",
+            "Una imagen de contenedor construyéndose",
+        ],
+        docker,
+    ),
+    (
+        "download",
+        ["Big files being downloaded", "Ficheiros grandes a descarregar", "Archivos grandes descargándose"],
+        download,
+    ),
     ("memdump", ["A memory dump", "Um despejo de memória", "Un volcado de memoria"], memdump),
-    ("packages", ["System packages being installed", "Pacotes do sistema a instalar", "Paquetes del sistema instalándose"], packages),
-    ("terraform", ["Cloud servers being created", "Servidores na nuvem a ser criados", "Servidores en la nube creándose"], terraform),
+    (
+        "packages",
+        ["System packages being installed", "Pacotes do sistema a instalar", "Paquetes del sistema instalándose"],
+        packages,
+    ),
+    (
+        "terraform",
+        ["Cloud servers being created", "Servidores na nuvem a ser criados", "Servidores en la nube creándose"],
+        terraform,
+    ),
     ("ansible", ["Servers being configured", "Servidores a ser configurados", "Servidores configurándose"], ansible),
-    ("weblog", ["A web server's access log", "O registo de acessos de um servidor web", "El registro de accesos de un servidor web"], weblog),
-    ("hashcrack", ["Passwords being cracked (not really)", "Palavras-passe a ser quebradas (a fingir)", "Contraseñas descifrándose (de mentira)"], hashcrack),
+    (
+        "weblog",
+        [
+            "A web server's access log",
+            "O registo de acessos de um servidor web",
+            "El registro de accesos de un servidor web",
+        ],
+        weblog,
+    ),
+    (
+        "hashcrack",
+        [
+            "Passwords being cracked (not really)",
+            "Palavras-passe a ser quebradas (a fingir)",
+            "Contraseñas descifrándose (de mentira)",
+        ],
+        hashcrack,
+    ),
     ("loading", ["Loading, loading...", "A carregar, a carregar...", "Cargando, cargando..."], loading),
 ];
 
@@ -245,7 +357,11 @@ fn cargo(c: &mut Ctx) -> bool {
             return false;
         }
     }
-    let s = format!("{} `release` profile [optimized] target(s) in {:.2}s", c.bold(GREEN, &format!("{:>12}", "Finished")), start.elapsed().as_secs_f64() * c.speed);
+    let s = format!(
+        "{} `release` profile [optimized] target(s) in {:.2}s",
+        c.bold(GREEN, &format!("{:>12}", "Finished")),
+        start.elapsed().as_secs_f64() * c.speed
+    );
     c.say(&s);
     c.wait(800)
 }
@@ -344,7 +460,8 @@ fn memdump(c: &mut Ctx) -> bool {
         let bytes: Vec<u8> = (0..16).map(|_| if c.rng.chance(0.25) { 0 } else { c.rng.below(256) as u8 }).collect();
         let hex: Vec<String> = bytes.iter().map(|b| format!("{b:02x}")).collect();
         let ascii: String = bytes.iter().map(|&b| if (32..127).contains(&b) { b as char } else { '.' }).collect();
-        let s = format!("{}  {}  {}", c.c(CYAN, &format!("{addr:016x}")), hex.join(" "), c.c(GREY, &format!("|{ascii}|")));
+        let s =
+            format!("{}  {}  {}", c.c(CYAN, &format!("{addr:016x}")), hex.join(" "), c.c(GREY, &format!("|{ascii}|")));
         c.say(&s);
         addr += 16;
         if !c.pause(10, 80) {
@@ -405,13 +522,27 @@ fn terraform(c: &mut Ctx) -> bool {
 }
 
 fn ansible(c: &mut Ctx) -> bool {
-    let hosts: Vec<String> = (0..c.rng.range(2, 6)).map(|i| format!("{}{:02}", c.rng.pick(&["web", "db", "cache", "worker"]), i + 1)).collect();
-    let tasks = ["Gathering Facts", "install packages", "copy configuration", "create users", "enable services", "open firewall ports", "restart application"];
+    let hosts: Vec<String> = (0..c.rng.range(2, 6))
+        .map(|i| format!("{}{:02}", c.rng.pick(&["web", "db", "cache", "worker"]), i + 1))
+        .collect();
+    let tasks = [
+        "Gathering Facts",
+        "install packages",
+        "copy configuration",
+        "create users",
+        "enable services",
+        "open firewall ports",
+        "restart application",
+    ];
     for t in tasks {
         let stars = "*".repeat(60usize.saturating_sub(t.len() + 7));
         c.say(&format!("\nTASK [{t}] {stars}"));
         for h in &hosts {
-            let s = if c.rng.chance(0.4) { c.c(YELLOW, &format!("changed: [{h}]")) } else { c.c(GREEN, &format!("ok: [{h}]")) };
+            let s = if c.rng.chance(0.4) {
+                c.c(YELLOW, &format!("changed: [{h}]"))
+            } else {
+                c.c(GREEN, &format!("ok: [{h}]"))
+            };
             c.say(&s);
             if !c.pause(60, 400) {
                 return false;
@@ -443,7 +574,10 @@ fn weblog(c: &mut Ctx) -> bool {
         let now = chrono::Local::now().format("%d/%b/%Y:%H:%M:%S %z");
         let size = c.rng.range(200, 90000);
         let method = if c.rng.chance(0.85) { "GET" } else { "POST" };
-        let s = format!("{ip} - - [{now}] \"{method} {path} HTTP/1.1\" {} {size} \"-\" \"{agent}\"", c.c(col, &code.to_string()));
+        let s = format!(
+            "{ip} - - [{now}] \"{method} {path} HTTP/1.1\" {} {size} \"-\" \"{agent}\"",
+            c.c(col, &code.to_string())
+        );
         c.say(&s);
         if !c.pause(20, 400) {
             return false;
@@ -493,7 +627,8 @@ fn main() {
     let mut cli = Cli::new("rgenact");
     let t = Lang::pick(cli.lang, &EN, &PT, &ES);
     let lang = cli.lang;
-    let (mut chosen, mut speed, mut time, mut count, mut color) = (Vec::<usize>::new(), 1.0f64, None::<f64>, None::<usize>, None::<bool>);
+    let (mut chosen, mut speed, mut time, mut count, mut color) =
+        (Vec::<usize>::new(), 1.0f64, None::<f64>, None::<usize>, None::<bool>);
     while let Some(a) = cli.next() {
         match a {
             Arg::Pos(p) => cli.unknown(&p),
@@ -560,7 +695,8 @@ mod tests {
     #[test]
     fn every_module_runs() {
         for (name, _, m) in MODULES {
-            let mut c = Ctx { rng: Rng::seeded(1), depth: Depth::None, speed: 1000.0, deadline: None, out: std::io::stdout() };
+            let mut c =
+                Ctx { rng: Rng::seeded(1), depth: Depth::None, speed: 1000.0, deadline: None, out: std::io::stdout() };
             assert!(m(&mut c), "{name}");
         }
     }

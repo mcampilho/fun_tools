@@ -9,11 +9,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 const CACHE_TTL_SECS: u64 = 15 * 60;
 
 /// Tried in order; the first answer that parses wins.
-const GEO_PROVIDERS: &[&str] = &[
-    "https://ipwho.is/",
-    "https://ipapi.co/json/",
-    "http://ip-api.com/json/",
-];
+const GEO_PROVIDERS: &[&str] = &["https://ipwho.is/", "https://ipapi.co/json/", "http://ip-api.com/json/"];
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Geo {
@@ -59,10 +55,8 @@ pub fn collect(refresh: bool) -> NetInfo {
         let v: Value = agent.get(url).call().ok()?.into_json().ok()?;
         parse_geo(&v)
     });
-    let weather = geo
-        .as_ref()
-        .and_then(|g| Some((g.lat?, g.lon?)))
-        .and_then(|(lat, lon)| fetch_weather(&agent, lat, lon));
+    let weather =
+        geo.as_ref().and_then(|g| Some((g.lat?, g.lon?))).and_then(|(lat, lon)| fetch_weather(&agent, lat, lon));
 
     let info = NetInfo { geo, weather };
     if info.geo.is_some() {
@@ -79,9 +73,7 @@ fn parse_geo(v: &Value) -> Option<Geo> {
         return None;
     }
     let s = |keys: &[&str]| {
-        keys.iter().find_map(|k| {
-            v.get(*k)?.as_str().map(str::trim).filter(|s| !s.is_empty()).map(String::from)
-        })
+        keys.iter().find_map(|k| v.get(*k)?.as_str().map(str::trim).filter(|s| !s.is_empty()).map(String::from))
     };
     let f = |keys: &[&str]| keys.iter().find_map(|k| v.get(*k)?.as_f64());
     Some(Geo {

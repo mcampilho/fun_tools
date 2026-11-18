@@ -40,14 +40,7 @@ impl Cli {
                 i += 1;
             }
         }
-        Cli {
-            tool,
-            lang: Lang::detect(lang.as_deref()),
-            args,
-            pos: 0,
-            only_positional: false,
-            inline: None,
-        }
+        Cli { tool, lang: Lang::detect(lang.as_deref()), args, pos: 0, only_positional: false, inline: None }
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -88,9 +81,7 @@ impl Cli {
 
     pub fn parse<T: FromStr>(&mut self, opt: &str) -> T {
         let v = self.value(opt);
-        v.trim()
-            .parse()
-            .unwrap_or_else(|_| self.fail(&format!("{} '{opt}': {v}", common(self.lang).invalid_value)))
+        v.trim().parse().unwrap_or_else(|_| self.fail(&format!("{} '{opt}': {v}", common(self.lang).invalid_value)))
     }
 
     /// Like `parse`, but the number must be inside `range`.

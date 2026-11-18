@@ -121,9 +121,7 @@ pub fn auto_name(os_id: &str, id_like: &str, flavor: Flavor) -> String {
             .find(|(k, _)| word == *k || (word.starts_with(k) && word[k.len()..].starts_with('-')))
             .map(|(_, v)| *v)
     };
-    let distro = lookup(&id)
-        .or_else(|| like.split_whitespace().find_map(lookup))
-        .unwrap_or("linux");
+    let distro = lookup(&id).or_else(|| like.split_whitespace().find_map(lookup)).unwrap_or("linux");
     if flavor == Flavor::Wsl {
         format!("{distro}-wsl")
     } else {
@@ -135,11 +133,7 @@ pub fn auto_name(os_id: &str, id_like: &str, flavor: Flavor) -> String {
 pub fn names() -> Vec<String> {
     let mut v = vec!["windows".to_string()];
     v.extend(WINDOWS_BADGES.iter().map(|b| format!("windows-{b}")));
-    v.extend(
-        ARTS.iter()
-            .filter(|a| a.name != "windows" && !a.name.starts_with("badge-"))
-            .map(|a| a.name.to_string()),
-    );
+    v.extend(ARTS.iter().filter(|a| a.name != "windows" && !a.name.starts_with("badge-")).map(|a| a.name.to_string()));
     v
 }
 
@@ -155,15 +149,14 @@ pub fn build(name: &str, colors: Colors) -> Option<Logo> {
         let badge = find(&format!("badge-{b}"))?;
         let base = Pixmap::from_art(find("windows")?, color);
         (base.overlay(&Pixmap::from_art(badge, color), 16, 16), badge.accent)
-    } else if let Some(d) = name.strip_suffix("-wsl") {
+    } else {
+        let d = name.strip_suffix("-wsl")?;
         let distro = find(d).filter(|a| !a.name.starts_with("badge-") && a.name != "windows")?;
         let base = Pixmap::from_art(distro, color);
         let badge = Pixmap::from_art(find("badge-winsmall")?, color);
         // y stays even, so the badge starts on a terminal line.
         let (x, y) = (base.w - badge.w * 2 / 3, (base.h - badge.h * 2 / 3) & !1);
         (base.overlay(&badge, x, y), distro.accent)
-    } else {
-        return None;
     };
     Some(Logo { lines: pixmap.render(colors), width: pixmap.w, accent })
 }
@@ -172,10 +165,22 @@ pub fn build(name: &str, colors: Colors) -> Option<Logo> {
 fn nearest16(c: u8) -> u8 {
     // The Windows console's default palette (Campbell): this mode is for Windows terminals.
     const BASIC: [(u8, u8, u8); 16] = [
-        (12, 12, 12), (197, 15, 31), (19, 161, 14), (193, 156, 0),
-        (0, 55, 218), (136, 23, 152), (58, 150, 221), (204, 204, 204),
-        (118, 118, 118), (231, 72, 86), (22, 198, 12), (249, 241, 165),
-        (59, 120, 255), (180, 0, 158), (97, 214, 214), (242, 242, 242),
+        (12, 12, 12),
+        (197, 15, 31),
+        (19, 161, 14),
+        (193, 156, 0),
+        (0, 55, 218),
+        (136, 23, 152),
+        (58, 150, 221),
+        (204, 204, 204),
+        (118, 118, 118),
+        (231, 72, 86),
+        (22, 198, 12),
+        (249, 241, 165),
+        (59, 120, 255),
+        (180, 0, 158),
+        (97, 214, 214),
+        (242, 242, 242),
     ];
     if c < 16 {
         return c;
@@ -225,7 +230,11 @@ impl Pixmap {
     }
 
     fn get(&self, x: usize, y: usize) -> Option<u8> {
-        if x < self.w && y < self.h { self.px[y * self.w + x] } else { None }
+        if x < self.w && y < self.h {
+            self.px[y * self.w + x]
+        } else {
+            None
+        }
     }
 
     /// Places `badge` at (ox, oy), growing the canvas if needed and clearing the
@@ -382,7 +391,7 @@ mod tests {
     #[test]
     fn basic_colours() {
         assert_eq!(nearest16(231), 15); // white
-        // The two Windows blues stay apart.
+                                        // The two Windows blues stay apart.
         assert_eq!(nearest16(39), 6);
         assert_eq!(nearest16(33), 12);
         assert_eq!(Colors::Ansi16.sgr(33, true), "104");

@@ -11,7 +11,7 @@ pub struct Row {
 /// Decides whether to use colours, and turns on ANSI support on Windows.
 pub fn use_color(forced: Option<bool>) -> bool {
     let wanted = forced.unwrap_or_else(|| {
-        std::env::var_os("NO_COLOR").map_or(true, |v| v.is_empty()) && std::io::stdout().is_terminal()
+        std::env::var_os("NO_COLOR").is_none_or(|v| v.is_empty()) && std::io::stdout().is_terminal()
     });
     wanted && enable_ansi()
 }
@@ -19,8 +19,7 @@ pub fn use_color(forced: Option<bool>) -> bool {
 #[cfg(windows)]
 fn enable_ansi() -> bool {
     use windows_sys::Win32::System::Console::{
-        GetConsoleMode, GetStdHandle, SetConsoleMode, ENABLE_VIRTUAL_TERMINAL_PROCESSING,
-        STD_OUTPUT_HANDLE,
+        GetConsoleMode, GetStdHandle, SetConsoleMode, ENABLE_VIRTUAL_TERMINAL_PROCESSING, STD_OUTPUT_HANDLE,
     };
     // SAFETY: plain Win32 console calls on our own stdout handle.
     unsafe {
@@ -54,7 +53,11 @@ pub enum Encoding {
 pub fn print(logo: &Logo, title: &str, rows: &[Row], colors: Colors, encoding: Encoding) {
     let color = colors.on();
     let paint = |code: &str, s: &str| {
-        if color { format!("\x1b[{code}m{s}\x1b[0m") } else { s.to_string() }
+        if color {
+            format!("\x1b[{code}m{s}\x1b[0m")
+        } else {
+            s.to_string()
+        }
     };
 
     let accent = format!("1;{}", colors.sgr(logo.accent, false));
@@ -110,7 +113,11 @@ fn to_oem_code_page(s: &str) -> Option<Vec<u8>> {
         }
         GetOEMCP()
     };
-    if cp == CP_UTF8 { None } else { encode(s, cp) }
+    if cp == CP_UTF8 {
+        None
+    } else {
+        encode(s, cp)
+    }
 }
 
 #[cfg(windows)]

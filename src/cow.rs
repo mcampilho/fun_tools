@@ -262,11 +262,8 @@ pub fn balloon(lines: &[String], think: bool) -> String {
 pub fn render(message: &str, o: &Options) -> Option<String> {
     let art = ANIMALS.iter().find(|(n, _)| *n == o.animal)?.1;
     let message = expand_tabs(message.trim_end(), 8);
-    let lines: Vec<String> = if o.wrap {
-        wrap_text(&message, o.width)
-    } else {
-        message.lines().map(str::to_string).collect()
-    };
+    let lines: Vec<String> =
+        if o.wrap { wrap_text(&message, o.width) } else { message.lines().map(str::to_string).collect() };
     let lines = if lines.is_empty() { vec![String::new()] } else { lines };
     let eyes = two(&o.eyes, "oo");
     let tongue = two(&o.tongue, "  ");
@@ -284,14 +281,7 @@ pub fn render(message: &str, o: &Options) -> Option<String> {
 pub fn run(think: bool) {
     let mut cli = Cli::new(if think { "rcowthink" } else { "rcowsay" });
     let t = texts(cli.lang);
-    let mut o = Options {
-        think,
-        animal: "cow".into(),
-        eyes: "oo".into(),
-        tongue: "  ".into(),
-        width: 40,
-        wrap: true,
-    };
+    let mut o = Options { think, animal: "cow".into(), eyes: "oo".into(), tongue: "  ".into(), width: 40, wrap: true };
     let mut words = Vec::new();
     let mut random = false;
     while let Some(a) = cli.next() {

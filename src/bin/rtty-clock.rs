@@ -43,8 +43,18 @@ d date, r bounce, x box, b blink, 1 to 8 colour.
 ",
     days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
     months: [
-        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
-        "November", "December",
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
     ],
     date: "{wd}, {m} {d}, {y}",
     unknown_color: "unknown colour",
@@ -75,8 +85,18 @@ d data, r saltar, x caixa, b piscar, 1 a 8 cor.
 ",
     days: ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"],
     months: [
-        "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro",
-        "novembro", "dezembro",
+        "janeiro",
+        "fevereiro",
+        "março",
+        "abril",
+        "maio",
+        "junho",
+        "julho",
+        "agosto",
+        "setembro",
+        "outubro",
+        "novembro",
+        "dezembro",
     ],
     date: "{wd}, {d} de {m} de {y}",
     unknown_color: "cor desconhecida",
@@ -107,8 +127,18 @@ d fecha, r rebotar, x caja, b parpadeo, 1 a 8 color.
 ",
     days: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"],
     months: [
-        "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre",
-        "noviembre", "diciembre",
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
     ],
     date: "{wd}, {d} de {m} de {y}",
     unknown_color: "color desconocido",
@@ -186,8 +216,8 @@ fn time_pixels(n: &Now, o: &Opts, colon_on: bool) -> Vec<Vec<bool>> {
             if i > 0 {
                 row.push(false);
             }
-            for x in from..to {
-                row.push(g[y + 1][x] && (c != ':' || colon_on));
+            for &lit in &g[y + 1][from..to] {
+                row.push(lit && (c != ':' || colon_on));
             }
         }
     }
@@ -200,7 +230,15 @@ fn draw(c: &mut Canvas, n: &Now, o: &Opts, pos: (i64, i64), colon_on: bool) -> (
     // Big digits: two columns by one row per pixel; mini: half blocks.
     let big = !o.mini && (pw * 2 + 4) as usize <= c.w && 7 + 5 <= c.h;
     let (w, h) = if big { (pw * 2, 7) } else { (pw, 4) };
-    let suffix = if o.twelve { if n.pm { " PM" } else { " AM" } } else { "" };
+    let suffix = if o.twelve {
+        if n.pm {
+            " PM"
+        } else {
+            " AM"
+        }
+    } else {
+        ""
+    };
     let date = if o.date { format!("{}{suffix}", n.date) } else { suffix.trim().to_string() };
     let total_w = w.max(date.chars().count() as i64) + 4;
     let total_h = h + if date.is_empty() { 0 } else { 2 } + 2;
@@ -327,7 +365,7 @@ fn run(o: &mut Opts, t: &Texts) -> std::io::Result<()> {
     let mut tick = 0u64;
     loop {
         let n = now(o, t);
-        let colon_on = !o.blink || n.s % 2 == 0;
+        let colon_on = !o.blink || n.s.is_multiple_of(2);
         if o.rebound {
             x += vx;
             y += vy;
@@ -386,8 +424,17 @@ mod tests {
     #[test]
     fn digits_have_fixed_width() {
         let o = Opts {
-            seconds: true, twelve: false, utc: false, date: true, format: None, color: COLORS[0].1,
-            boxed: true, blink: false, rebound: false, screensaver: false, mini: false,
+            seconds: true,
+            twelve: false,
+            utc: false,
+            date: true,
+            format: None,
+            color: COLORS[0].1,
+            boxed: true,
+            blink: false,
+            rebound: false,
+            screensaver: false,
+            mini: false,
         };
         let a = time_pixels(&Now { h: 11, m: 11, s: 11, pm: false, date: String::new() }, &o, true);
         let b = time_pixels(&Now { h: 20, m: 48, s: 59, pm: true, date: String::new() }, &o, true);

@@ -21,12 +21,7 @@ pub fn collect() -> UserInfo {
 #[cfg(unix)]
 fn from_passwd() -> Option<UserInfo> {
     let status = std::fs::read_to_string("/proc/self/status").ok()?;
-    let uid = status
-        .lines()
-        .find_map(|l| l.strip_prefix("Uid:"))?
-        .split_whitespace()
-        .next()?
-        .to_string();
+    let uid = status.lines().find_map(|l| l.strip_prefix("Uid:"))?.split_whitespace().next()?.to_string();
     let passwd = std::fs::read_to_string("/etc/passwd").ok()?;
     passwd.lines().find_map(|line| {
         let f: Vec<&str> = line.split(':').collect();
@@ -34,9 +29,6 @@ fn from_passwd() -> Option<UserInfo> {
             return None;
         }
         let full = f[4].split(',').next().unwrap_or("").trim();
-        Some(UserInfo {
-            username: f[0].to_string(),
-            full_name: (!full.is_empty()).then(|| full.to_string()),
-        })
+        Some(UserInfo { username: f[0].to_string(), full_name: (!full.is_empty()).then(|| full.to_string()) })
     })
 }

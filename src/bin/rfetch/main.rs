@@ -9,10 +9,10 @@ mod user;
 
 use logo::Colors;
 use render::Row;
-use system::Terminal;
 use std::process::ExitCode;
 use std::sync::mpsc;
 use std::time::{Duration, Instant};
+use system::Terminal;
 
 /// Maximum time we wait for the network after the local data is ready.
 const NET_BUDGET: Duration = Duration::from_millis(3500);
@@ -107,9 +107,8 @@ fn main() -> ExitCode {
         (sys.join().expect("system info thread"), user, git, tz, kbd)
     });
 
-    let net = net_rx
-        .and_then(|rx| rx.recv_timeout(NET_BUDGET.saturating_sub(start.elapsed())).ok())
-        .unwrap_or_default();
+    let net =
+        net_rx.and_then(|rx| rx.recv_timeout(NET_BUDGET.saturating_sub(start.elapsed())).ok()).unwrap_or_default();
 
     let rows = build_rows(t, &sys, &git, tz, locale, kbd, &net);
     let forced_16 = std::env::var("RFETCH_COLORS").ok().map(|v| v.trim() == "16");
@@ -118,13 +117,8 @@ fn main() -> ExitCode {
         (true, Some(true), _) | (true, None, Terminal::ConsoleZ) => Colors::Ansi16,
         (true, _, _) => Colors::Ansi256,
     };
-    let name = opts
-        .logo
-        .clone()
-        .unwrap_or_else(|| logo::auto_name(&sys.os_id, &sys.os_id_like, sys.flavor));
-    let logo = logo::build(&name, colors)
-        .or_else(|| logo::build("linux", colors))
-        .expect("built-in logo");
+    let name = opts.logo.clone().unwrap_or_else(|| logo::auto_name(&sys.os_id, &sys.os_id_like, sys.flavor));
+    let logo = logo::build(&name, colors).or_else(|| logo::build("linux", colors)).expect("built-in logo");
     let title = match &user.full_name {
         Some(full) => format!("{}@{} ({full})", user.username, sys.host),
         None => format!("{}@{}", user.username, sys.host),
@@ -170,10 +164,7 @@ fn build_rows(
         }),
     );
     add(t.memory, Some(usage(sys.mem_used, sys.mem_total)));
-    add(
-        t.disk,
-        sys.disk.as_ref().map(|d| format!("{} {}", usage(d.used, d.total), d.mount)),
-    );
+    add(t.disk, sys.disk.as_ref().map(|d| format!("{} {}", usage(d.used, d.total), d.mount)));
     add(
         t.git,
         match (&git.name, &git.email) {

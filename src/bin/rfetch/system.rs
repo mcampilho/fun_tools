@@ -2,8 +2,7 @@
 
 use std::path::{Path, PathBuf};
 use sysinfo::{
-    CpuRefreshKind, Disks, MemoryRefreshKind, ProcessRefreshKind, ProcessesToUpdate, RefreshKind,
-    System, UpdateKind,
+    CpuRefreshKind, Disks, MemoryRefreshKind, ProcessRefreshKind, ProcessesToUpdate, RefreshKind, System, UpdateKind,
 };
 
 /// The environment rfetch runs in, beyond the OS itself (chooses the logo).
@@ -91,14 +90,11 @@ pub struct DiskUsage {
 pub fn collect() -> SysInfo {
     // Only refresh RAM. The CPU list is NOT loaded through sysinfo: on Windows it
     // sets up PDH performance counters, which takes from 0.5 s to several seconds.
-    let mut sys = System::new_with_specifics(
-        RefreshKind::nothing().with_memory(MemoryRefreshKind::nothing().with_ram()),
-    );
+    let mut sys =
+        System::new_with_specifics(RefreshKind::nothing().with_memory(MemoryRefreshKind::nothing().with_ram()));
 
     let (os, os_id, os_id_like) = os_name();
-    let cpu = cpu_brand(&mut sys)
-        .map(|b| b.split_whitespace().collect::<Vec<_>>().join(" "))
-        .filter(|b| !b.is_empty());
+    let cpu = cpu_brand(&mut sys).map(|b| b.split_whitespace().collect::<Vec<_>>().join(" ")).filter(|b| !b.is_empty());
     let cores_logical = std::thread::available_parallelism().map_or(1, |n| n.get());
     let (shell, flavor, terminal) = detect_shell(&mut sys);
 
@@ -183,24 +179,16 @@ fn os_name() -> (String, String, String) {
             .map(|v| v.trim().trim_matches(['"', '\'']).to_string())
             .filter(|v| !v.is_empty())
     };
-    let pretty = get("PRETTY_NAME")
-        .or_else(|| get("NAME"))
-        .or_else(System::long_os_version)
-        .unwrap_or_else(|| "Linux".into());
-    (
-        pretty,
-        get("ID").unwrap_or_else(System::distribution_id),
-        get("ID_LIKE").unwrap_or_default(),
-    )
+    let pretty =
+        get("PRETTY_NAME").or_else(|| get("NAME")).or_else(System::long_os_version).unwrap_or_else(|| "Linux".into());
+    (pretty, get("ID").unwrap_or_else(System::distribution_id), get("ID_LIKE").unwrap_or_default())
 }
 
 #[cfg(windows)]
 fn os_name() -> (String, String, String) {
     let mut name = System::long_os_version().unwrap_or_else(|| "Windows".into());
     // The registry still says "Windows 10" on Windows 11; builds >= 22000 are 11.
-    let build: u32 = System::kernel_version()
-        .and_then(|k| k.split('.').next_back()?.trim().parse().ok())
-        .unwrap_or(0);
+    let build: u32 = System::kernel_version().and_then(|k| k.split('.').next_back()?.trim().parse().ok()).unwrap_or(0);
     if build >= 22000 && name.contains("Windows 10") {
         name = name.replacen("Windows 10", "Windows 11", 1);
     }
@@ -209,11 +197,7 @@ fn os_name() -> (String, String, String) {
 
 #[cfg(not(any(target_os = "linux", windows)))]
 fn os_name() -> (String, String, String) {
-    (
-        System::long_os_version().unwrap_or_else(|| std::env::consts::OS.into()),
-        System::distribution_id(),
-        String::new(),
-    )
+    (System::long_os_version().unwrap_or_else(|| std::env::consts::OS.into()), System::distribution_id(), String::new())
 }
 
 /// Usage of the disk holding the system (C:\ on Windows, / elsewhere).
@@ -225,10 +209,7 @@ fn system_disk() -> Option<DiskUsage> {
         PathBuf::from("/")
     };
     let disks = Disks::new_with_refreshed_list();
-    let disk = disks
-        .list()
-        .iter()
-        .find(|d| same_path(d.mount_point(), &target))?;
+    let disk = disks.list().iter().find(|d| same_path(d.mount_point(), &target))?;
     let total = disk.total_space();
     (total > 0).then(|| DiskUsage {
         mount: target.display().to_string(),
@@ -246,8 +227,26 @@ fn same_path(a: &Path, b: &Path) -> bool {
 }
 
 const SHELLS: &[&str] = &[
-    "pwsh", "powershell", "cmd", "bash", "zsh", "fish", "nu", "sh", "dash", "ksh", "mksh",
-    "tcsh", "csh", "elvish", "xonsh", "ion", "oil", "osh", "yash", "murex",
+    "pwsh",
+    "powershell",
+    "cmd",
+    "bash",
+    "zsh",
+    "fish",
+    "nu",
+    "sh",
+    "dash",
+    "ksh",
+    "mksh",
+    "tcsh",
+    "csh",
+    "elvish",
+    "xonsh",
+    "ion",
+    "oil",
+    "osh",
+    "yash",
+    "murex",
 ];
 
 /// A parent process: lower-case name without ".exe", and its executable path.
@@ -367,10 +366,7 @@ fn unix_layer(exe: &Path) -> Option<Flavor> {
 #[cfg(windows)]
 fn terminal_of_shell(exe: &Path) -> Option<Terminal> {
     let dir = exe.parent()?;
-    ["motty.exe", "cygtermd.exe", "XWin_MobaX.exe"]
-        .iter()
-        .any(|f| dir.join(f).is_file())
-        .then_some(Terminal::MobaXterm)
+    ["motty.exe", "cygtermd.exe", "XWin_MobaX.exe"].iter().any(|f| dir.join(f).is_file()).then_some(Terminal::MobaXterm)
 }
 
 #[cfg(not(windows))]
@@ -383,7 +379,11 @@ fn flavor(_chain: &[Proc], _idx: Option<usize>) -> Flavor {
     let wsl = std::env::var_os("WSL_DISTRO_NAME").is_some()
         || std::fs::read_to_string("/proc/sys/kernel/osrelease")
             .is_ok_and(|r| r.to_ascii_lowercase().contains("microsoft"));
-    if wsl { Flavor::Wsl } else { Flavor::Native }
+    if wsl {
+        Flavor::Wsl
+    } else {
+        Flavor::Native
+    }
 }
 
 fn pretty_shell(stem: &str) -> String {

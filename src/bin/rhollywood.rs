@@ -86,9 +86,8 @@ enum Kind {
     Rain,
 }
 
-const KINDS: &[Kind] = &[
-    Kind::Hex, Kind::Code, Kind::Log, Kind::Net, Kind::Procs, Kind::Meters, Kind::Progress, Kind::Scope, Kind::Rain,
-];
+const KINDS: &[Kind] =
+    &[Kind::Hex, Kind::Code, Kind::Log, Kind::Net, Kind::Procs, Kind::Meters, Kind::Progress, Kind::Scope, Kind::Rain];
 
 impl Kind {
     fn title(self) -> &'static str {
@@ -119,17 +118,58 @@ struct Pane {
 }
 
 const WORDS: &[&str] = &[
-    "kernel", "socket", "buffer", "cipher", "packet", "thread", "daemon", "vector", "matrix", "quantum",
-    "proxy", "tunnel", "shard", "cache", "token", "hash", "payload", "node", "cluster", "firewall",
-    "handshake", "entropy", "sector", "uplink", "relay", "mainframe", "protocol", "checksum", "mirror", "core",
+    "kernel",
+    "socket",
+    "buffer",
+    "cipher",
+    "packet",
+    "thread",
+    "daemon",
+    "vector",
+    "matrix",
+    "quantum",
+    "proxy",
+    "tunnel",
+    "shard",
+    "cache",
+    "token",
+    "hash",
+    "payload",
+    "node",
+    "cluster",
+    "firewall",
+    "handshake",
+    "entropy",
+    "sector",
+    "uplink",
+    "relay",
+    "mainframe",
+    "protocol",
+    "checksum",
+    "mirror",
+    "core",
 ];
 const VERBS: &[&str] = &[
-    "allocating", "decrypting", "routing", "compiling", "indexing", "rebuilding", "syncing", "scanning",
-    "tracing", "flushing", "mapping", "validating", "bypassing", "rotating", "spawning", "patching",
+    "allocating",
+    "decrypting",
+    "routing",
+    "compiling",
+    "indexing",
+    "rebuilding",
+    "syncing",
+    "scanning",
+    "tracing",
+    "flushing",
+    "mapping",
+    "validating",
+    "bypassing",
+    "rotating",
+    "spawning",
+    "patching",
 ];
 const PROCS: &[&str] = &[
-    "sshd", "nginx", "postgres", "redis", "kworker", "systemd", "dockerd", "cryptd", "netmon", "watchdog",
-    "rustc", "cargo", "node", "python3", "java", "syslogd", "cron", "tor", "openvpn", "kswapd",
+    "sshd", "nginx", "postgres", "redis", "kworker", "systemd", "dockerd", "cryptd", "netmon", "watchdog", "rustc",
+    "cargo", "node", "python3", "java", "syslogd", "cron", "tor", "openvpn", "kswapd",
 ];
 const TYPES: &[&str] = &["u8", "u32", "i64", "f64", "usize", "Vec<u8>", "&str", "String", "Option<Key>", "Packet"];
 
@@ -140,9 +180,7 @@ fn ip(rng: &mut Rng) -> String {
 impl Pane {
     fn new(kind: Kind, rng: &mut Rng) -> Pane {
         let procs = (0..24)
-            .map(|_| {
-                (rng.pick(PROCS).to_string(), rng.range(100, 32000) as u32, rng.float() * 30.0, rng.float() * 8.0)
-            })
+            .map(|_| (rng.pick(PROCS).to_string(), rng.range(100, 32000) as u32, rng.float() * 30.0, rng.float() * 8.0))
             .collect();
         let tasks = (0..6).map(|_| (Pane::task_name(rng), rng.float() * 100.0, 0.5 + rng.float() * 3.0)).collect();
         Pane {
@@ -179,33 +217,81 @@ impl Pane {
                 let pad = "    ".repeat(self.indent);
                 let w = rng.pick(WORDS);
                 let (text, color, next) = match rng.below(9) {
-                    0 if self.indent < 3 => (format!("fn {}_{}(x: {}) -> {} {{", rng.pick(VERBS).trim_end_matches("ing"), w, rng.pick(TYPES), rng.pick(TYPES)), CYAN, self.indent + 1),
+                    0 if self.indent < 3 => (
+                        format!(
+                            "fn {}_{}(x: {}) -> {} {{",
+                            rng.pick(VERBS).trim_end_matches("ing"),
+                            w,
+                            rng.pick(TYPES),
+                            rng.pick(TYPES)
+                        ),
+                        CYAN,
+                        self.indent + 1,
+                    ),
                     1 if self.indent < 3 => (format!("for {} in {}s.iter() {{", &w[..1], w), MAGENTA, self.indent + 1),
-                    2 if self.indent < 3 => (format!("if {}.len() > 0x{:x} {{", w, rng.range(16, 4096)), MAGENTA, self.indent + 1),
+                    2 if self.indent < 3 => {
+                        (format!("if {}.len() > 0x{:x} {{", w, rng.range(16, 4096)), MAGENTA, self.indent + 1)
+                    }
                     3 | 4 if self.indent > 0 => ("}".to_string(), WHITE, self.indent - 1),
                     5 => (format!("// {} {} ({} ms)", rng.pick(VERBS), w, rng.range(1, 999)), GREY, self.indent),
-                    6 => (format!("let {} = {}::new({});", w, rng.pick(TYPES), rng.range(0, 65535)), WHITE, self.indent),
-                    7 => (format!("{}.{}(&mut {})?;", w, rng.pick(VERBS).trim_end_matches("ing"), rng.pick(WORDS)), GREEN, self.indent),
-                    _ => (format!("   Compiling {} v0.{}.{}", w, rng.range(1, 30), rng.range(0, 9)), YELLOW, self.indent),
+                    6 => {
+                        (format!("let {} = {}::new({});", w, rng.pick(TYPES), rng.range(0, 65535)), WHITE, self.indent)
+                    }
+                    7 => (
+                        format!("{}.{}(&mut {})?;", w, rng.pick(VERBS).trim_end_matches("ing"), rng.pick(WORDS)),
+                        GREEN,
+                        self.indent,
+                    ),
+                    _ => {
+                        (format!("   Compiling {} v0.{}.{}", w, rng.range(1, 30), rng.range(0, 9)), YELLOW, self.indent)
+                    }
                 };
                 let out = vec![(format!("{pad}{text}"), color)];
                 self.indent = next;
                 out
             }
             Kind::Log => {
-                let (lvl, col) = *rng.pick(&[("INFO ", GREEN), ("INFO ", GREEN), ("DEBUG", GREY), ("WARN ", YELLOW), ("ERROR", RED)]);
+                let (lvl, col) = *rng.pick(&[
+                    ("INFO ", GREEN),
+                    ("INFO ", GREEN),
+                    ("DEBUG", GREY),
+                    ("WARN ", YELLOW),
+                    ("ERROR", RED),
+                ]);
                 let t = rng.range(0, 86400);
                 vec![
                     (format!("[{:02}:{:02}:{:02}] ", t / 3600, t / 60 % 60, t % 60), DIM),
                     (format!("{lvl} "), col),
-                    (format!("{}[{}]: {} {} {}", rng.pick(PROCS), rng.range(100, 9999), rng.pick(VERBS), rng.pick(WORDS), rng.pick(WORDS)), WHITE),
+                    (
+                        format!(
+                            "{}[{}]: {} {} {}",
+                            rng.pick(PROCS),
+                            rng.range(100, 9999),
+                            rng.pick(VERBS),
+                            rng.pick(WORDS),
+                            rng.pick(WORDS)
+                        ),
+                        WHITE,
+                    ),
                 ]
             }
             Kind::Net => {
-                let st = *rng.pick(&[("ESTABLISHED", GREEN), ("SYN_SENT", YELLOW), ("TIME_WAIT", GREY), ("LISTEN", CYAN), ("CLOSE_WAIT", RED)]);
+                let st = *rng.pick(&[
+                    ("ESTABLISHED", GREEN),
+                    ("SYN_SENT", YELLOW),
+                    ("TIME_WAIT", GREY),
+                    ("LISTEN", CYAN),
+                    ("CLOSE_WAIT", RED),
+                ]);
                 vec![
                     (format!("tcp  {:>21} ", format!("{}:{}", ip(rng), rng.range(1024, 65535))), WHITE),
-                    (format!("-> {:>21} ", format!("{}:{}", ip(rng), *rng.pick(&[22, 80, 443, 8080, 5432, 6379, 1337]))), CYAN),
+                    (
+                        format!(
+                            "-> {:>21} ",
+                            format!("{}:{}", ip(rng), *rng.pick(&[22, 80, 443, 8080, 5432, 6379, 1337]))
+                        ),
+                        CYAN,
+                    ),
                     (st.0.to_string(), st.1),
                 ]
             }
@@ -290,16 +376,41 @@ impl Pane {
             Kind::Procs => {
                 put(c, 0, &[(format!("{:>6} {:<10} {:>5} {:>5}", "PID", "COMMAND", "%CPU", "%MEM"), YELLOW)]);
                 for (i, p) in self.procs.iter().take(ih.saturating_sub(1)).enumerate() {
-                    let col = if p.2 > 70.0 { RED } else if p.2 > 30.0 { YELLOW } else { GREEN };
-                    put(c, i + 1, &[(format!("{:>6} {:<10} ", p.1, p.0), WHITE), (format!("{:>5.1} {:>5.1}", p.2, p.3), col)]);
+                    let col = if p.2 > 70.0 {
+                        RED
+                    } else if p.2 > 30.0 {
+                        YELLOW
+                    } else {
+                        GREEN
+                    };
+                    put(
+                        c,
+                        i + 1,
+                        &[(format!("{:>6} {:<10} ", p.1, p.0), WHITE), (format!("{:>5.1} {:>5.1}", p.2, p.3), col)],
+                    );
                 }
             }
             Kind::Meters => {
                 for (i, m) in self.meters.iter().enumerate().take(ih) {
                     let bar_w = iw.saturating_sub(12);
                     let n = (*m / 100.0 * bar_w as f64) as usize;
-                    let col = if *m > 80.0 { RED } else if *m > 50.0 { YELLOW } else { GREEN };
-                    put(c, i, &[(format!("cpu{i} ["), WHITE), ("|".repeat(n), col), (" ".repeat(bar_w - n), col), (format!("]{:>4.0}%", m), WHITE)]);
+                    let col = if *m > 80.0 {
+                        RED
+                    } else if *m > 50.0 {
+                        YELLOW
+                    } else {
+                        GREEN
+                    };
+                    put(
+                        c,
+                        i,
+                        &[
+                            (format!("cpu{i} ["), WHITE),
+                            ("|".repeat(n), col),
+                            (" ".repeat(bar_w - n), col),
+                            (format!("]{:>4.0}%", m), WHITE),
+                        ],
+                    );
                 }
             }
             Kind::Progress => {
@@ -310,13 +421,23 @@ impl Pane {
                     let bar_w = iw.saturating_sub(8);
                     let n = (t.1 / 100.0 * bar_w as f64) as usize;
                     put(c, 2 * i, &[(t.0.clone(), WHITE)]);
-                    put(c, 2 * i + 1, &[("[".into(), DIM), ("#".repeat(n), GREEN), (".".repeat(bar_w - n), DIM), (format!("]{:>4.0}%", t.1), CYAN)]);
+                    put(
+                        c,
+                        2 * i + 1,
+                        &[
+                            ("[".into(), DIM),
+                            ("#".repeat(n), GREEN),
+                            (".".repeat(bar_w - n), DIM),
+                            (format!("]{:>4.0}%", t.1), CYAN),
+                        ],
+                    );
                 }
             }
             Kind::Scope => {
                 let mid = ih as f64 / 2.0;
                 for x in 0..iw {
-                    let v = (self.phase + x as f64 * 0.25).sin() * 0.6 + (self.phase * 1.7 + x as f64 * 0.07).sin() * 0.3;
+                    let v =
+                        (self.phase + x as f64 * 0.25).sin() * 0.6 + (self.phase * 1.7 + x as f64 * 0.07).sin() * 0.3;
                     let y = (mid - v * mid * 0.9).clamp(0.0, ih as f64 - 1.0) as i64;
                     c.set(ix + x as i64, iy + y, '•', Some(CYAN), false);
                     if (x as i64 + self.phase as i64) % 8 == 0 {

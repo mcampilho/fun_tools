@@ -121,12 +121,7 @@ impl Kind {
 }
 
 const POTS: [&[&str]; 2] = [
-    &[
-        "(.,;~^~;.,.;~^~;.,.;~^)",
-        " \\                   /",
-        "  \\_________________/",
-        "   `-'           `-'",
-    ],
+    &["(.,;~^~;.,.;~^~;.,.;~^)", " \\                   /", "  \\_________________/", "   `-'           `-'"],
     &["(~.,;~.,~;.)", " \\_______/"],
 ];
 
@@ -254,15 +249,8 @@ impl Tree {
 }
 
 fn grow(w: i64, h: i64, seed: u64, life: Option<i64>, mult: f64, base: usize) -> Tree {
-    let mut t = Tree {
-        w,
-        h,
-        cells: vec![None; (w * h) as usize],
-        log: Vec::new(),
-        rng: Rng::seeded(seed),
-        mult,
-        budget: 60,
-    };
+    let mut t =
+        Tree { w, h, cells: vec![None; (w * h) as usize], log: Vec::new(), rng: Rng::seeded(seed), mult, budget: 60 };
     let pot: &[&str] = if base == 0 { &[] } else { POTS[base - 1] };
     let pot_w = pot.iter().map(|l| l.chars().count()).max().unwrap_or(0) as i64;
     let soil_y = h - pot.len() as i64;
@@ -431,16 +419,29 @@ impl PxTree {
             self.end_step();
             // The trunk forks at regular steps up its top part, branches now and then.
             let forks = if depth == 0 {
-                f > 0.22 && f < 0.9 && (i - last_fork) as f64 > n as f64 / (2.0 + self.mult * 0.6) && self.rng.chance(0.5)
+                f > 0.22
+                    && f < 0.9
+                    && (i - last_fork) as f64 > n as f64 / (2.0 + self.mult * 0.6)
+                    && self.rng.chance(0.5)
             } else {
                 depth < 3 && i - last_fork > 4 && f > 0.25 && self.rng.chance(0.03 * self.mult)
             };
             if forks {
                 self.trunk_side = -self.trunk_side;
                 last_fork = i;
-                let dir = if depth == 0 { self.trunk_side } else if self.rng.chance(0.75) { side } else { -side };
+                let dir = if depth == 0 {
+                    self.trunk_side
+                } else if self.rng.chance(0.75) {
+                    side
+                } else {
+                    -side
+                };
                 let a = -std::f64::consts::FRAC_PI_2 + dir * (1.05 + self.rng.float() * 0.35);
-                let sub = if depth == 0 { len * (0.6 + self.rng.float() * 0.35) * (1.15 - f * 0.55) } else { (len * (1.0 - f)).max(5.0) * 0.6 };
+                let sub = if depth == 0 {
+                    len * (0.6 + self.rng.float() * 0.35) * (1.15 - f * 0.55)
+                } else {
+                    (len * (1.0 - f)).max(5.0) * 0.6
+                };
                 self.limb(x, y, a, sub, (r * 0.6).max(0.7), depth + 1);
             }
         }
@@ -494,7 +495,15 @@ fn px_pot(t: &mut PxTree, base: usize, color: Rgb) -> i64 {
     let dark = pix::scale(color, 0.6);
     for j in 0..ph {
         // A tray with feet, or a round bowl.
-        let inset = if big { if j >= ph - 2 { 2 } else { 0 } } else { (j * j / 12).min(pw / 3) };
+        let inset = if big {
+            if j >= ph - 2 {
+                2
+            } else {
+                0
+            }
+        } else {
+            (j * j / 12).min(pw / 3)
+        };
         for i in inset..pw - inset {
             if big && j >= ph - 2 && i > 4 && i < pw - 5 {
                 continue; // between the feet
@@ -529,7 +538,17 @@ fn grow_px(w: i64, rows: i64, seed: u64, life: Option<i64>, mult: f64, base: usi
     let mut rng = Rng::seeded(seed);
     let leaf_kind = if foliage < FOLIAGE.len() { foliage } else { rng.below(FOLIAGE.len()) };
     let pot = POT_COLORS[rng.below(POT_COLORS.len())];
-    let mut t = PxTree { w, h, px: vec![None; (w * h) as usize], log: Vec::new(), rng, mult, budget: 70, leaf: FOLIAGE[leaf_kind].1, trunk_side: 1.0 };
+    let mut t = PxTree {
+        w,
+        h,
+        px: vec![None; (w * h) as usize],
+        log: Vec::new(),
+        rng,
+        mult,
+        budget: 70,
+        leaf: FOLIAGE[leaf_kind].1,
+        trunk_side: 1.0,
+    };
     let soil = px_pot(&mut t, base, pot);
     let len = life.map(|l| l as f64 * 2.0).unwrap_or(soil as f64 * 0.6).max(8.0);
     let thick = (w as f64 / 28.0).clamp(2.2, 4.0) * (len / 30.0).clamp(0.7, 1.25);
@@ -577,7 +596,10 @@ impl PxTree {
     fn render(&self, depth: Depth) -> String {
         let mut out = String::new();
         for row in self.top_row()..(self.h + 1) / 2 {
-            let end = (0..self.w).rev().find(|&x| self.get(x, 2 * row).is_some() || self.get(x, 2 * row + 1).is_some()).map_or(0, |p| p + 1);
+            let end = (0..self.w)
+                .rev()
+                .find(|&x| self.get(x, 2 * row).is_some() || self.get(x, 2 * row + 1).is_some())
+                .map_or(0, |p| p + 1);
             for x in 0..end {
                 out.push_str(&px_cell(self.get(x, 2 * row), self.get(x, 2 * row + 1), depth));
             }
@@ -592,7 +614,17 @@ impl PxTree {
         let top = self.top_row();
         let rows = (self.h + 1) / 2 - top;
         let _ = write!(out, "{}\x1b[{rows}A\r\x1b7", "\n".repeat(rows as usize));
-        let mut shown = PxTree { w: self.w, h: self.h, px: vec![None; self.px.len()], log: Vec::new(), rng: Rng::seeded(0), mult: 0.0, budget: 0, leaf: self.leaf, trunk_side: 1.0 };
+        let mut shown = PxTree {
+            w: self.w,
+            h: self.h,
+            px: vec![None; self.px.len()],
+            log: Vec::new(),
+            rng: Rng::seeded(0),
+            mult: 0.0,
+            budget: 0,
+            leaf: self.leaf,
+            trunk_side: 1.0,
+        };
         let mut dirty: Vec<(i64, i64)> = Vec::new();
         let mut frame = String::new();
         for (n, &(x, y, c, end)) in self.log.iter().enumerate() {
@@ -648,9 +680,10 @@ fn main() {
                     let v = cli.value(&opt);
                     foliage = match v.as_str() {
                         "random" => FOLIAGE.len(),
-                        _ => FOLIAGE.iter().position(|(n, _)| *n == v).unwrap_or_else(|| {
-                            cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value))
-                        }),
+                        _ => FOLIAGE
+                            .iter()
+                            .position(|(n, _)| *n == v)
+                            .unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value))),
                     };
                 }
                 "--color" => color = Some(true),
@@ -682,8 +715,8 @@ fn main() {
     }
     let tree = grow(w, h, seed, life, mult, base);
     if live_mode && tty {
-            // Moving the cursor needs escape codes even without colours (NO_COLOR).
-            term::enable_ansi();
+        // Moving the cursor needs escape codes even without colours (NO_COLOR).
+        term::enable_ansi();
         live(&tree, depth, Duration::from_secs_f64(step));
     } else {
         let _ = std::io::stdout().write_all(render(&tree, depth).as_bytes());
@@ -717,7 +750,15 @@ mod tests {
     #[ignore]
     fn snapshot() {
         let env = |k: &str, d: u64| std::env::var(k).ok().and_then(|v| v.parse().ok()).unwrap_or(d);
-        let t = grow_px(env("SNAP_W", 100) as i64, env("SNAP_H", 30) as i64, env("SNAP_SEED", 3), None, env("SNAP_M", 5) as f64, env("SNAP_BASE", 1) as usize, env("SNAP_F", 0) as usize);
+        let t = grow_px(
+            env("SNAP_W", 100) as i64,
+            env("SNAP_H", 30) as i64,
+            env("SNAP_SEED", 3),
+            None,
+            env("SNAP_M", 5) as f64,
+            env("SNAP_BASE", 1) as usize,
+            env("SNAP_F", 0) as usize,
+        );
         print!("{}", t.render(Depth::True));
     }
 

@@ -129,15 +129,18 @@ const W: i64 = 10;
 const H: i64 = 20;
 const MODES: [&str; 3] = ["evil", "random", "nice"];
 
-/// The seven pieces of four blocks, as cells in their box, with their colours.
-const PIECES: [(&[(i64, i64)], i64, Rgb); 7] = [
-    (&[(0, 1), (1, 1), (2, 1), (3, 1)], 4, Rgb(80, 190, 215)),   // I
-    (&[(0, 0), (1, 0), (0, 1), (1, 1)], 2, Rgb(230, 190, 70)),   // O
-    (&[(1, 0), (0, 1), (1, 1), (2, 1)], 3, Rgb(170, 105, 215)),  // T
-    (&[(1, 0), (2, 0), (0, 1), (1, 1)], 3, Rgb(105, 195, 105)),  // S
-    (&[(0, 0), (1, 0), (1, 1), (2, 1)], 3, Rgb(220, 85, 90)),    // Z
-    (&[(2, 0), (0, 1), (1, 1), (2, 1)], 3, Rgb(235, 140, 60)),   // L
-    (&[(0, 0), (0, 1), (1, 1), (2, 1)], 3, Rgb(85, 125, 225)),   // J
+/// A piece: its cells in their box, the size of the box and its colour.
+type Shape = (&'static [(i64, i64)], i64, Rgb);
+
+/// The seven pieces of four blocks.
+const PIECES: [Shape; 7] = [
+    (&[(0, 1), (1, 1), (2, 1), (3, 1)], 4, Rgb(80, 190, 215)),  // I
+    (&[(0, 0), (1, 0), (0, 1), (1, 1)], 2, Rgb(230, 190, 70)),  // O
+    (&[(1, 0), (0, 1), (1, 1), (2, 1)], 3, Rgb(170, 105, 215)), // T
+    (&[(1, 0), (2, 0), (0, 1), (1, 1)], 3, Rgb(105, 195, 105)), // S
+    (&[(0, 0), (1, 0), (1, 1), (2, 1)], 3, Rgb(220, 85, 90)),   // Z
+    (&[(2, 0), (0, 1), (1, 1), (2, 1)], 3, Rgb(235, 140, 60)),  // L
+    (&[(0, 0), (0, 1), (1, 1), (2, 1)], 3, Rgb(85, 125, 225)),  // J
 ];
 
 fn cells(kind: usize, rot: usize) -> [(i64, i64); 4] {
@@ -182,7 +185,11 @@ impl Board {
     }
 
     fn get(&self, x: i64, y: i64) -> Option<usize> {
-        if y < 0 { None } else { self.cells[(y * W + x) as usize] }
+        if y < 0 {
+            None
+        } else {
+            self.cells[(y * W + x) as usize]
+        }
     }
 
     fn fits(&self, p: &Piece) -> bool {
@@ -211,7 +218,11 @@ impl Board {
                 y -= 1;
             }
         }
-        if out { None } else { Some(cleared) }
+        if out {
+            None
+        } else {
+            Some(cleared)
+        }
     }
 
     fn drop_y(&self, p: &Piece) -> Piece {
@@ -242,7 +253,10 @@ impl Board {
         let total: i64 = heights.iter().sum();
         let bumps: i64 = heights.windows(2).map(|w| (w[0] - w[1]).abs()).sum();
         let top = *heights.iter().max().unwrap_or(&0);
-        -0.51 * total as f64 + 0.76 * cleared as f64 - 0.36 * holes as f64 - 0.18 * bumps as f64 - if top > H - 4 { 20.0 } else { 0.0 }
+        -0.51 * total as f64 + 0.76 * cleared as f64
+            - 0.36 * holes as f64
+            - 0.18 * bumps as f64
+            - if top > H - 4 { 20.0 } else { 0.0 }
     }
 
     /// The best rating the player can reach with this piece.
@@ -488,7 +502,13 @@ impl View {
         for (i, k) in t.keys.iter().enumerate() {
             c.text(sx, by + 16 + i as i64, k, Some(Rgb(110, 110, 125)), false);
         }
-        let msg = if g.over { Some((t.over, Rgb(240, 90, 90))) } else if paused { Some((t.paused, Rgb(240, 210, 80))) } else { None };
+        let msg = if g.over {
+            Some((t.over, Rgb(240, 90, 90)))
+        } else if paused {
+            Some((t.paused, Rgb(240, 210, 80)))
+        } else {
+            None
+        };
         if let Some((m, col)) = msg {
             let mx = bx + W - fun::text::width(m) as i64 / 2;
             c.text(mx.max(0), by + 8, &format!(" {m} "), Some(col), false);
@@ -520,7 +540,10 @@ fn main() {
                 "-V" | "--version" => cli.version(),
                 "-m" | "--mode" => {
                     let v = cli.value(&opt).to_ascii_lowercase();
-                    mode = MODES.iter().position(|m| *m == v).unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
+                    mode = MODES
+                        .iter()
+                        .position(|m| *m == v)
+                        .unwrap_or_else(|| cli.fail(&format!("{} '{opt}': {v}", common(cli.lang).invalid_value)));
                 }
                 "-L" | "--level" => level = cli.number(&opt, 0..=15),
                 "-G" | "--no-ghost" => ghost = false,
@@ -568,7 +591,11 @@ fn run(t: &Texts, mode: usize, level: u32, ghost: bool) -> std::io::Result<u64> 
             scores::add("rblocks", MODES[mode], game.score);
             best = best.max(game.score);
         }
-        let wait = if game.over || paused { Duration::from_millis(250) } else { fall_at.saturating_duration_since(Instant::now()) };
+        let wait = if game.over || paused {
+            Duration::from_millis(250)
+        } else {
+            fall_at.saturating_duration_since(Instant::now())
+        };
         let input = tui::poll(wait)?;
         match input {
             Input::Quit => return Ok(if saved { 0 } else { game.score }),

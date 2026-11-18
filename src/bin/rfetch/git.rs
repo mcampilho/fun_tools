@@ -24,12 +24,9 @@ fn config_files() -> Vec<PathBuf> {
     if let Some(p) = std::env::var_os("GIT_CONFIG_GLOBAL") {
         return vec![PathBuf::from(p)];
     }
-    let home = std::env::var_os("HOME")
-        .or_else(|| std::env::var_os("USERPROFILE"))
-        .map(PathBuf::from);
-    let xdg = std::env::var_os("XDG_CONFIG_HOME")
-        .map(PathBuf::from)
-        .or_else(|| home.as_ref().map(|h| h.join(".config")));
+    let home = std::env::var_os("HOME").or_else(|| std::env::var_os("USERPROFILE")).map(PathBuf::from);
+    let xdg =
+        std::env::var_os("XDG_CONFIG_HOME").map(PathBuf::from).or_else(|| home.as_ref().map(|h| h.join(".config")));
     let mut files = Vec::new();
     if let Some(x) = xdg {
         files.push(x.join("git").join("config"));

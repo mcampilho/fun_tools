@@ -46,8 +46,7 @@ pub fn depth(forced: Option<bool>) -> Depth {
 #[cfg(windows)]
 pub fn enable_ansi() -> bool {
     use windows_sys::Win32::System::Console::{
-        GetConsoleMode, GetStdHandle, SetConsoleMode, ENABLE_VIRTUAL_TERMINAL_PROCESSING,
-        STD_OUTPUT_HANDLE,
+        GetConsoleMode, GetStdHandle, SetConsoleMode, ENABLE_VIRTUAL_TERMINAL_PROCESSING, STD_OUTPUT_HANDLE,
     };
     // SAFETY: plain Win32 console calls on our own stdout handle.
     unsafe {
@@ -95,28 +94,48 @@ pub fn fg(depth: Depth, c: Rgb) -> String {
 /// Nearest xterm-256 colour (6×6×6 cube or grey ramp).
 pub fn to256(Rgb(r, g, b): Rgb) -> u8 {
     let level = |v: u8| -> u8 {
-        if v < 48 { 0 } else if v < 115 { 1 } else { ((v as u16 - 35) / 40) as u8 }
+        if v < 48 {
+            0
+        } else if v < 115 {
+            1
+        } else {
+            ((v as u16 - 35) / 40) as u8
+        }
     };
     let (lr, lg, lb) = (level(r), level(g), level(b));
     let cube_val = |l: u8| if l == 0 { 0 } else { 55 + 40 * l as i32 };
     let cube = 16 + 36 * lr + 6 * lg + lb;
-    let dist = |a: (i32, i32, i32)| {
-        (a.0 - r as i32).pow(2) + (a.1 - g as i32).pow(2) + (a.2 - b as i32).pow(2)
-    };
+    let dist = |a: (i32, i32, i32)| (a.0 - r as i32).pow(2) + (a.1 - g as i32).pow(2) + (a.2 - b as i32).pow(2);
     let cube_d = dist((cube_val(lr), cube_val(lg), cube_val(lb)));
     let avg = (r as i32 + g as i32 + b as i32) / 3;
     let gi = ((avg - 8).max(0) / 10).min(23);
     let gv = 8 + 10 * gi;
-    if dist((gv, gv, gv)) < cube_d { 232 + gi as u8 } else { cube }
+    if dist((gv, gv, gv)) < cube_d {
+        232 + gi as u8
+    } else {
+        cube
+    }
 }
 
 /// Nearest of the 16 basic colours (Windows console's default palette).
 pub fn to16(Rgb(r, g, b): Rgb) -> u8 {
     const BASIC: [(i32, i32, i32); 16] = [
-        (12, 12, 12), (197, 15, 31), (19, 161, 14), (193, 156, 0),
-        (0, 55, 218), (136, 23, 152), (58, 150, 221), (204, 204, 204),
-        (118, 118, 118), (231, 72, 86), (22, 198, 12), (249, 241, 165),
-        (59, 120, 255), (180, 0, 158), (97, 214, 214), (242, 242, 242),
+        (12, 12, 12),
+        (197, 15, 31),
+        (19, 161, 14),
+        (193, 156, 0),
+        (0, 55, 218),
+        (136, 23, 152),
+        (58, 150, 221),
+        (204, 204, 204),
+        (118, 118, 118),
+        (231, 72, 86),
+        (22, 198, 12),
+        (249, 241, 165),
+        (59, 120, 255),
+        (180, 0, 158),
+        (97, 214, 214),
+        (242, 242, 242),
     ];
     (0..16u8)
         .min_by_key(|&i| {
