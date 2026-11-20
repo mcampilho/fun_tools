@@ -36,7 +36,7 @@ rfetch [opções]
 
 ## Logótipos
 
-![Todos os logótipos](rfetch-logos.png)
+![Todos os logótipos](images/rfetch-logos.png)
 
 Os logótipos são pixel art em 256 cores: dois pixels por carácter, com meios-blocos (`▀ ▄`) e
 células coloridas. Um carácter com os dois pixels da mesma cor é um espaço com fundo colorido, e
@@ -74,7 +74,7 @@ Os logótipos são gerados por `tools/rfetch_logos.py` (formas simples → grelh
 `rfetch/src/logo/art.rs`, mais uma imagem de pré-visualização):
 
 ```bash
-python3 tools/rfetch_logos.py docs/rfetch-logos.png rfetch/src/logo/art.rs
+python3 tools/rfetch_logos.py docs/images/rfetch-logos.png rfetch/src/logo/art.rs
 ```
 
 ## Rapidez e robustez

@@ -5,7 +5,7 @@ Todas as tools começam por **r** (de Rust).
 
 [English](README.md)
 
-![Demonstração](docs/demo.png)
+![Demonstração](docs/images/demo.png)
 
 | Tool | Ao estilo de | O que faz |
 |---|---|---|
@@ -232,7 +232,7 @@ barco ou uma medusa. Teclas: q sair, p pausa, r recomeçar.
 
 ### O aspeto Unicode (`-u`) do rasciiquarium, do rsl e do rbonsai
 
-![Aspeto Unicode](docs/unicode.png)
+![Aspeto Unicode](docs/images/unicode.png)
 
 Com `-u, --unicode`, tudo passa a pixel art a cores: cada célula do terminal mostra dois
 pixels quadrados com os meios blocos `▀ ▄`, e alguns símbolos ficam por cima (bolhas `○ ◦`,
@@ -282,7 +282,7 @@ rfire -m chars -C                  # só caracteres, como o antigo aafire
 rfire -m braille -p gas -w 2       # pontos braille, chama de gás, algum vento
 ```
 
-![Fogo: píxeis, fogueira, caracteres e braille](docs/fire.png)
+![Fogo: píxeis, fogueira, caracteres e braille](docs/images/fire.png)
 
 As chamas seguem o fogo clássico da demoscene que o aafire tornou famoso: cada ponto fica com a
 média de cinco pontos por baixo dele e arrefece um pouco, por isso o calor que entra no fundo
@@ -322,7 +322,7 @@ rponysay -t -k pegasus "Hmm..."    # pensar
 rponysay -l                        # pelagens e tipos
 ```
 
-![Póneis e canos](docs/ponies-pipes.png)
+![Póneis e canos](docs/images/ponies-pipes.png)
 
 Os póneis são pixel art original desenhada pelo programa (não são as personagens do ponysay
 original): três tipos (pony, unicorn, pegasus) e oito pelagens (coral, lilac, azure, lemon,
@@ -356,7 +356,7 @@ algarismos. É tudo inventado. Teclas: q sair, espaço baralhar.
 
 ### Os jogos: rblocks, rinvaders, rsudoku
 
-![Jogos](docs/games.png)
+![Jogos](docs/images/games.png)
 
 Os jogos são originais: partilham o género e as regras com os clássicos, não os nomes,
 os desenhos nem o aspeto.
@@ -449,7 +449,7 @@ src/pixfont.rs    a fonte de pixels original (fontes embutidas, rtty-clock)
 src/bin/*.rs      um ficheiro por tool
 rfetch/           rfetch, crate própria (vários módulos)
 tools/            gerador dos logótipos do rfetch, scripts de release locais
-docs/             imagens, documentação do rfetch
+docs/             documentação do rfetch; imagens dos READMEs em docs/images/
 demo.bat, demo.sh compilam tudo e mostram uma pequena demonstração de cada tool
 .github/          CI (fmt, clippy, testes), workflow de release, Dependabot
 ```

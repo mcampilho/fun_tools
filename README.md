@@ -5,7 +5,7 @@ Every tool starts with **r** (for Rust).
 
 [Português](README.pt.md)
 
-![Demo](docs/demo.png)
+![Demo](docs/images/demo.png)
 
 | Tool | In the style of | What it does |
 |---|---|---|
@@ -230,7 +230,7 @@ Keys: q quit, p pause, r restart.
 
 ### The Unicode look (`-u`) of rasciiquarium, rsl and rbonsai
 
-![Unicode look](docs/unicode.png)
+![Unicode look](docs/images/unicode.png)
 
 With `-u, --unicode`, everything is colour pixel art: each terminal cell shows two square
 pixels with the half blocks `▀ ▄`, and a few symbols go on top (`○ ◦` bubbles, `✦ · ∙`
@@ -280,7 +280,7 @@ rfire -m chars -C                  # characters only, like the old aafire
 rfire -m braille -p gas -w 2       # braille dots, a gas flame, some wind
 ```
 
-![Fire: pixels, campfire, characters and braille](docs/fire.png)
+![Fire: pixels, campfire, characters and braille](docs/images/fire.png)
 
 The flames follow the classic fire of the demo scene that aafire made famous: every point
 takes the average of five points below it and cools a little, so the heat fed in at the bottom
@@ -320,7 +320,7 @@ rponysay -t -k pegasus "Hmm..."    # think
 rponysay -l                        # coats and kinds
 ```
 
-![Ponies and pipes](docs/ponies-pipes.png)
+![Ponies and pipes](docs/images/ponies-pipes.png)
 
 The ponies are original pixel art drawn by the program (they are not the characters of the
 original ponysay): three kinds (pony, unicorn, pegasus) and eight coats (coral, lilac, azure,
@@ -354,7 +354,7 @@ is made up. Keys: q quit, space shuffle.
 
 ### The games: rblocks, rinvaders, rsudoku
 
-![Games](docs/games.png)
+![Games](docs/images/games.png)
 
 The games are original: they share their genre and rules with the classics, not their
 names, art or look.
@@ -446,7 +446,7 @@ src/pixfont.rs    the original pixel font (built-in fonts, rtty-clock)
 src/bin/*.rs      one file per tool
 rfetch/           rfetch, its own crate (several modules)
 tools/            rfetch logo generator, local release scripts
-docs/             images, rfetch documentation
+docs/             rfetch documentation; README images in docs/images/
 demo.bat, demo.sh build everything and run a short demo of each tool
 .github/          CI (fmt, clippy, tests), release workflow, Dependabot
 ```
